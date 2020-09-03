@@ -1,0 +1,48 @@
+---
+title: "R Notebook"
+output: html_notebook
+author: "Martin Shepperd"
+date: 03/09/2020
+---
+
+# Make some charts from Data Scientist Need to Know Skills
+
+This is R Notebook for Week1 of CS5702 (Modern Data).
+ 
+As a simplification I only use base R, rather than ggplot.
+
+First we need to reproduce the data, since the original article ["What are the In-Demand Skills for Data Scientists in 2020?"] (https://towardsdatascience.com/what-are-the-in-demand-skills-for-data-scientists-in-2020-a060b7f31b11), doesn't provide the raw observations.  I extracted the percentages from the text / chart. 
+
+```{r}
+# Reproduce the data
+
+percent <- c(62,40,39,21,20,20,19,16,15,13)
+skill <- c("Python","SQL","R","Spark","Cloud","AWS","Java","TensorFlow","Hadoop","SAS")
+```
+
+Now we have the data let's try to create some graphical representations.
+
+```{r}
+# Ugly visualisation of the data
+
+pie(percent, main="Pie chart of in demand Data Scientist skills", labels=skill)
+```
+
+This pie chart has a number of disadvantages.  Can you think what some of them might be?
+
+As an alternative I now create a bar chart.
+
+```{r}
+# Creating a bar chart with Base R
+
+barplot(percent, 
+main="Bar chart of in-demand Data Scientist skills (Jan 2020)", 
+sub = "Source: https://j.mp/2Ga8CD1",
+ylab="Percentage of listings that mention skill", 
+names.arg=skill, 
+cex.names = 0.6,                                     # shrinks text size so fits on x-axis
+col="darkolivegreen",
+density=c(100, 50, 100, 50, 50, 50, 50, 50, 50, 50)) # Shades Python and R in a darker colour
+```
+
+Hopefully you consider this to be an improvement, but it's not perfect. Can you think of any further improvements or clarifications?  
