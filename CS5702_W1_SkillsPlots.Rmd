@@ -40,8 +40,8 @@ main="Bar chart of in-demand Data Scientist skills (Jan 2020)",
 sub = "Source: https://j.mp/2Ga8CD1",
 ylab="Percentage of listings that mention skill", 
 names.arg=skill, 
-cex.names = 0.6,                                     # shrinks text size so fits on x-axis
-col="darkolivegreen",
+cex.names = 0.6,                                     # Shrinks text size so fits on x-axis
+col="darkolivegreen",                                # Colour for bar chart boxes
 density=c(100, 50, 100, 50, 50, 50, 50, 50, 50, 50)) # Shades Python and R in a darker colour
 ```
 
