@@ -302,11 +302,11 @@ Although we could just `print()` income, I have added a string to make the outpu
 
 HINT: I recommend you define a new numeric variable to store the tax rate and another for net income.  For clarity you might want to rename `income` to make it obvious that it stores gross income.
 
-**Bonus:** How would you answer the question: it's possible to write a much shorter R program without any extra variables, so why bother?
+**Bonus Exercise:** How would you answer the question: it's possible to write a much shorter R program without any extra variables, so why bother?
 
 It's very *important* to get into the habit of writing easy to follow R code.  For this reason I have added comments and tried to select meaningful variable names.
 
-Please check your understanding of this chapter via this [quick quiz](https://forms.gle/LtHSgTi58TDK9t1f9) (10 simple multiple choice questions).
+**Exercise:** Please check your understanding of this chapter via this [quick quiz](https://forms.gle/LtHSgTi58TDK9t1f9) (10 simple multiple choice questions).
 
 
 ## Appendix - extra notes on YAML {#YAML_appendix}
