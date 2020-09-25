@@ -1,0 +1,140 @@
+---
+# This is the YAML header
+title: "CS5702 W0 Seminar Notebook"
+output: html_notebook
+author: Martin Shepperd
+date: 24/09/2020
+# This is the end of the YAML header 
+# (use it as a template for your rmarkdown files)
+---
+
+Note that a longer (i.e., with far more background information) version of this Worksheet is available in the module book [Modern Data](https://bookdown.org/martin_shepperd/ModernDataBook/W0-Prep.html#C0_SoftwareInstall).  This Seminar Worksheet contains the *extracted* the practical exercises.
+
+This seminar worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
+
+But we have a bootstrapping problem in that our first step is to install R and RStudio which we need to view the Seminar Worksheet.  Start (I assume you have already) by viewing the pre-rendered (by me, Martin) version which has the suffix `.nb.html`.  Most likely the file is called `CS5702_W0_Seminar.nb.html` unless you have changed it.
+
+
+## Seminar Learning Goals
+
+1. [Install R and RStudio on your computer](#W0S1)
+2. [Modify some R code to check your installation](#W0S2) 
+3. [Write and run your own R program](#W0S3)
+
+Remember, you are encouraged to **explore and experiment**.  Change something and see what happens!
+
+**Pre-requisites**
+
+You should:  
+
+1. At least skimmed the [Getting Ready chapter](https://bookdown.org/martin_shepperd/ModernDataBook/C0-GettingReady.html){target="_blank"} of the Modern Data module book.  
+2. Read the [Study Guide](https://blackboard.brunel.ac.uk/bbcswebdav/pid-1232754-dt-content-rid-6089099_1/xid-6089099_1){target="_blank"} so you have an overview of this study block and its connection with the rest of your MSc.
+
+## 1. Install R and RStudio {#C0S1}
+
+This module, and other modules on your MSc, including CS5701 Quantitative Data Analysis, use R as a data analysis and statistical work horse.  
+
+Therefore, you will need to install R and *then* RStudio.  Note that the order is important.
+
+**Installation steps**
+
+1. Go to the [Comprehensive R Archive Network](https://cran.r-project.org/) that is universally known as CRAN^[CRAN is in actual fact a network of ftp and web servers around the world that mirror each other and have the latest versions of the code, packages and documentation for R.].  Select the appropriate **pre-compiled binary distribution** for your computer (Mac/PC/Linux) to download R.  It should be v4.0.0 or later.
+2. Go to [RStudio’s website](https://www.rstudio.com/products/rstudio/download/) to download the RStudio IDE.  Note that RStudio will not work unless you have previously installed R.
+3. Select the "RStudio Desktop FREE" option and click Download. NB you want the desktop, not the server version.
+4. Choose your operating system (Mac, Windows, or Linux).
+5. Select the ‘latest release’ on the page for your operating system (it should be 1.2.5 or later).
+6. Download and install the application.
+7. Launch RStudio.
+
+8. You will see that RStudio is split into panes.  When you start you should see something like this.  I recommend you check out my [short (8mins) video](https://www.loom.com/share/f0ecbbbc17dc43acbcdf9deb5fb22f3c) that introduces RStudio.
+
+![RStudio after launching](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/C0_RStudioLaunch.png)
+
+9. On the left is the Console Pane. Here you can type in your R code at the `>` prompt (highlighted by the green arrow ) followed by the Return key.  It is mainly used for interactive tasks, e.g., interactively analysing some data or to test a command and see if it works.  To the top right is the Environment Pane which shows the different variables you are using.  Since RStudio has only just been launched and we haven't done anything yet, this pane is empty.  Likewise the bottom right pane (where you can tab between Plots and Help, amongst other options) is also empty.
+ 
+![RStudio after typing in a very simple R program](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/C0_RStudio1.png)
+
+
+## 2. Test RStudio {#W0S2}
+
+Now you have RStudio working you can load the RMarkdown version of the worksheet.  From now on we can work from `.Rmd` files.
+
+2.1. Open the file `CS5702_W0_Seminar.Rmd`.  You should see RStudio with the .Rmd file in the Edit Pane.
+
+![RStudio immediately after loading the Week0 Worksheet](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/W0_Seminar_RSt_Launch.png)
+
+2.2. Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
+
+The intention is markdown languages including RMarkdown are human readable.  There are very few rules.  For a quick overview from RStudio see their [webpage](https://rmarkdown.rstudio.com/authoring_quick_tour.html).
+
+2.3. Now it's time to run your first piece of R code which computes the answer to one plus one divided by 5. NB The two lines starting with a hash symbol (#) are comments which are ignored by the R interpreter, however, they do help make your code easier to read for humans.  
+
+```{r addition, exercise=TRUE}
+# Any line commencing with a hash is a comment, e.g., this one.
+# R can evaluate arithmetic functions, the spaces are for aesthetics only.
+(1 + 1)/5
+```
+
+![Code chunks and how to run them in RStudio](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/W0_Seminar_RSt_CodeChunk.png)
+
+
+2.4. **Exercise** Run the code by clicking the green triangle in the top right hand corner of the grey code chunk in RStudio (i.e. not the html file).
+
+2.5. **Exercise** Now change it so it computes two plus two multiplied by 5 by editing the code in the Edit Pane.
+
+Let's move on to a more complex and more useful R program.  Don't worry if you don't follow all the details yet, as our main purpose is to get you used to RStudio and to begin to see the power of R. 
+
+2.6. The R program below generates two vectors of 1000 random numbers that both follow a normal distribution.  They share the same standard deviation `sd` of 2, but differ in that they have means or centres of 10 and 11 respectively.  The program compares the two vectors `r.1` and `r.2` **graphically** by plotting the kernel densities.  These are a kind of smoothed histogram.
+
+```{r, results='hide'}
+# A simple R program to compare two vectors of random numbers
+
+set.seed(42)      # set the random number generator seed so get same output each time             
+n.trials <- 1000
+m.1 <- 10         # mean for random vector r.1
+m.2 <- 11         # mean for random vector r.2
+sd <- 2           # standard deviation for random numbers
+
+# rnorm is a built in function. You can find out more by typing "?rnorm"
+r.1 <- rnorm(n.trials, m.1, sd)   # Generate 1000 normally distributed numbers
+r.2 <- rnorm(n.trials, m.2, sd)   # Generate 1000 numbers, with a different mean
+
+plot(density(r.1), main = "Kernel Density Plot: r.1 and r.2", col = "purple")
+lines(density(r.2), col = "red")   # Overlay density of r.2
+```
+
+2.7. Looking at the R code, we see that the comments appear in brown text.  Below is the output of two superimposed density plots, a purple one for `r.1` and a red one for `r.2`. 
+
+2.8. Paste the above program (use the icon in the top right corner when you mouse-over the code) into the Console Pane of RStudio.  When you execute it, note that the output will appear in the Plot Pane and the Environment Pane will be updated to reflect the contents of all the variables your program has created/manipulated (see the screenshot below ).
+
+![Running a program in RStudio to compare two vectors of random numbers](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/C0_RStudioDensity.png)
+
+
+## 3. Writing and running your own R code {#W0S3}
+
+3.1. If you find typing/pasting R code into the Console Pane every time you want to execute it, is becoming tedious then you're right!  From the top menu bar choose File > New File > R Script and an empty pane will appear in the top right of the window named 'Untitled1' until you Save it as something.  
+
+3.2. Note the file will be named `<yourfilename>.R`.  You can get RStudio to save the file somewhere convenient by selecting the Session > Set Working Directory option.  You execute the R, not by pressing Return as in the Console Pane, but by selecting the code you wish to execute and then clicking Run.
+
+![Saving your R code in RStudio](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/C0_RStudioSave.png) 
+
+Once, you have successfully saved the R program you can start to experiment
+
+3.3. **Exercise:** Try different standard deviations and means for the randomly generated data.  You can also explore other ways of visualising the distributions, such as histograms and boxplots.  Try `hist(r.1); hist(r.2)` and `boxplot(r.1, r.2)`.  NB slightly annoyingly, the `hist()` function will only take a single variable as an argument, whereas `boxplot()` will accept multiple arguments.  Also note that `;` is used when we are not using an end-of-line or carriage return.
+
+3.4. When you Quit RStudio you will be prompted to "Save your workspace image".  I strongly advise you to select **"Don't Save"** to prevent carryover effects from one R session to another.  Under **Preferences > General > Workspace** you can set a Never save workspace option to prevent you having to answer every time you Quit RStudio. 
+
+Although initially RStudio might seem quite complicated, it's an extremely useful and versatile Integrated Development Environment (IDE) for R.  
+
+
+## 4. Follow up information on RStudio {#W0S4}
+
+A lot more information can be found about RStudio:  
+- see this [tutorial](https://data-flair.training/blogs/rstudio-tutorial/) for more detail including loading and managing data (something we will cover in the next few weeks)  
+- the RStudio IDE [cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/rstudio-ide.pdf)  
+- [blog](https://blog.rstudio.com/2020/02/25/rstudio-1-3-integrated-tutorials/) from the RStudio team about the release of v1.3  
+
+
+
+
+```
