@@ -3,10 +3,13 @@
 title: "CS5702 W1 Seminar Notebook"
 output: html_notebook
 author: Martin Shepperd
-date: 14/09/2020
+date: 1/10/2020
 # This is the end of the YAML header 
 # (use it as a template for your rmarkdown files)
 ---
+
+This Worksheet has been **slightly updated** (1.10.2020) to better explain the checking for missing data
+
 
 ## Seminar Learning Goals
 
@@ -44,9 +47,10 @@ There's a very helpful guide on RMarkdown from RStudio [here](https://rmarkdown.
 
 Below is an example of an R code chunk which can be executed from within the R Notebook.  You can do this by clicking the green triangle to the top right of the chunk area within the Notebook.  If you wanted to run all the code up until, and including, this code chunk you can click the grey triangle with the green bar ^[In this case there is no previous code so it would make no difference but often RMarkdown contains multiple code chunks.].
 
+
 ```{r}
 # This is an R code chunk
-print("Hello world")
+print("Goodbye cruel world")
 ```
 
 **Exercise:**  Edit the R code to output "Goodbye cruel world" or some other message.  Re-run the code chunk.  
@@ -56,6 +60,12 @@ print("Hello world")
 Check you can see the html version.  The preview shows you a rendered HTML copy of the contents of the editor. The output from the R code chunks is whatever was generated when it was last run in the RStudio.
 
 **Exercise:**  Add a new 3rd level heading named "My RMarkdown Exercise" here.  Add an anchor label `{#<anchor-name>}`.  Now at another point in the document you can link to your anchor, as follows: `[text to display]` immediately followed by the `(<anchor-name>).  Lines 13-15 of this RMarkdown file are examples.
+
+```{r}
+z <- 3
+z <- z * 17
+print(z)
+```
 
 
 ## 2. Analysing the Joining Questionnaire{#S2}
@@ -106,7 +116,9 @@ names(surveyDF)[9] <- "Excite"
 names(surveyDF)[10] <- "Concern"
 ```
 
-**Missing** data is frequently a problem for data analysis.  It is so important we will revisit the topic in detail in Week 5 on Data Cleaning.  In R missing observations are denoted `na`.  Note that this is different to `NaN` (or Not a Number) which refers to the result of a computation e.g., `sqrt(-1)`.  Try it!  
+**Missing** data is frequently a problem for data analysis.  It is so important we will revisit the topic in detail in Week 5 on Data Cleaning.  In R missing observations should be denoted `na`.  Note that this is different to `NaN` (or Not a Number) which refers to the result of a computation e.g., `sqrt(-1)`.  Try it!  
+
+Whilst it might seem a technicality the importing function read.csv() treats an empty string "" as such, i.e., it's still a value since the survey respondent has chosen not to enter any reply as opposed to they never saw the question.  Remember the questionnaire permits no answer as an answer as well as text!
 
 ```{r}
 # A *very* simple way to check for missing observations in our data frame
@@ -328,11 +340,3 @@ An RMarkdown file *must* start with a header written using YAML syntax.  There a
 
 YAML is delineated by `---` and `---`.  
 
-```
----
-title: "An example"
-author: "Johnny Data Scientist"
-date: "September 14, 2020"
-output: html_document
----
-```
