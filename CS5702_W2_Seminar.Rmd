@@ -1,0 +1,190 @@
+---
+# This is the YAML header
+title: "CS5702 W2 Seminar Notebook"
+output: html_notebook
+author: Martin Shepperd
+date: 06/10/2020
+# This is the end of the YAML header 
+# (use it as a template for your rmarkdown files)
+---
+
+## Seminar Learning Goals
+
+1. [Analyse covid-19 data trends](#W2S1)  
+2. [To run and extend some simple R code to compute book income](#W2S2)  
+
+3. [Exercise answers](#W2A) 
+
+
+##0. Worksheet Introduction
+
+<span style="color: darkorange;">**Pre-requisites**</span>
+
+You should:  
+
+1. have completed the Week 1 Joining Seminar  
+2. have (re-)acquainted yourself with Week 1 Seminar worksheet  
+3. be familiar (listened to/read) the Week 2 Lecture "The Richness of Data"  
+4. be able to write, edit, save and re-open your own RMarkdown files
+
+If this is proving a <span style="color: darkorange;">**challenge**</span> see ["Prerequisites for Week 2 Seminars and Labs (CS5701/02)"](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/CS5702_W2_Sem_PreReqs.pdf) for advice.
+
+This seminar worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
+
+Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
+
+Remember, you are encouraged to explore and experiment.  Change something and see what happens!
+
+As per last week we will cover a lot of new ground but don't be discouraged.  We will revisit these concepts over the following weeks to help you consolidate your understanding. 
+
+
+## 1. Visualising covid-19 data trends {#W2S1}
+
+This example shows how we can fetch and visualise covid-19 data from John Hopkins University via GitHub.
+
+### Initialisation
+
+We need some packages over and above base R.  Since we may not be sure whether they are already installed we test for their presence.  Most packages come from CRAN and are easy to install using `install.packages()` but the package `{tidycovid19}` is on GitHub (joachim-gassen) so we also need `{devtools}` in order to install packages that aren't on CRAN.
+
+This R code may appear daunting but don't worry.  We will revisit it in detail in Week 3.  For the time being see it as a way to install and load necessary extra functionality beyond base ER.
+
+```{r messages=F}
+# If a package is installed, it will be loaded and missing package(s) will be installed 
+# from CRAN and then loaded.
+
+# The packages we need are:
+ 
+packages = c("tidyverse", "devtools")
+
+# Load the package or install and load it
+package.check <- lapply(
+  packages,
+  FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+    }
+  }
+)
+
+install_github("joachim-gassen/tidycovid19")
+library(tidycovid19)
+```
+
+Download the data (cached on GitHub rather than directly from John Hopkins University).  This is live data updated within the last 24 hours.  
+
+```{r}
+#Download the data into a data frame called cv.df using the 
+#download_jhu_csse_covid19_data() function from the {tidycovid19} package.
+#
+cv.df <- download_jhu_csse_covid19_data(cached = TRUE)
+```
+
+**Exercise 2.1:** The dataframe which comprises all international covid-19 data recorded by John Hopkins since January 22, 2020 has 47545*7 observations (see the Environment Pane).  Is this large?  How much larger can R handle?
+
+### Explore the data
+
+Let's focus on the UK  and then "eyeball" the data again.
+
+```{r}
+# select only the UK data
+cv.uk.df <- subset(cv.df, iso3c=="GBR")
+
+head(cv.uk.df)
+tail(cv.uk.df)
+```
+
+## Show trends
+
+### Mortality rate
+
+```{r}
+# Compute new deaths as the data shows cumulative deaths
+cv.uk.df$new.d[2:nrow(cv.uk.df)] <- tail(cv.uk.df$deaths, -1) - head(cv.uk.df$deaths, -1)
+cv.uk.df$new.d[1] <- 0     # Add zero for first row 
+
+# Compute new infections
+cv.uk.df$new.i[2:nrow(cv.uk.df)] <- tail(cv.uk.df$confirmed, -1) - head(cv.uk.df$confirmed, -1)
+cv.uk.df$new.i[1] <- 0     # Add zero for first row 
+```
+
+We can produce a plot of daily additional deaths using the {ggplot} package which is an extremely powerful and flexible set of functions for producing extremely high quality graphics e.g. NYT, Guardian and the BBC.  We also save the plots using the `ggsave()` function which is also part of the {ggplot} package.
+
+```{r}
+# NB a small span value (<1) makes the loess smoother more wiggly!
+ggplot(data = cv.uk.df, aes(x = date, y = new.d)) +
+  geom_line(color = "skyblue", size = 0.6) +
+  ylim(0,1200) +
+  stat_smooth(color = "darkorange", fill = "darkorange", method = "loess", span = 0.2) +
+  ggtitle("Daily additional deaths in the UK due to covid-19") +
+  xlab("Date") + ylab("Daily new deaths")
+ggsave("cv19_UK_deathrate.png")
+```
+
+### Infection rate
+
+Note that we use a log scale for the y-axis ie daily new infection rate.
+
+**Exercise 2.2:** Why did I choose to use a log scale for daily new infection rate?
+
+```{r}
+ggplot(data = cv.uk.df, aes(x = date, y = new.i)) +
+  geom_line(color = "skyblue", size = 0.6) +
+  scale_y_continuous(trans = "log10") +
+  stat_smooth(color = "darkorange", fill = "darkorange", method = "loess") +
+  ggtitle("Daily new infections in the UK from covid-19") +
+  xlab("Date") + ylab("Daily new infections") 
+ggsave("cv19_UK_infectionrate.png")
+```
+
+To better visualise the trends (i.e., over time) we use the **loess** (locally estimated scatterplot smoothing) smoother.  It is designed to detect trends in the presence of noisy data when the shape of the trend is unknown thus it is a robust (non-parametric) method.  
+
+**Exercise 2.3:** If you look carefully at the data there is a clear cycle within the overall trend.  What is it and why?  How should we deal with it?
+
+**Exercise 2.4:** What does the light orange shaded region around the smoothed trend line mean?  Why does it vary in breadth?
+
+**Exercise 2.5:** What was the greatest number of new infections in one day in the UK?  HINT there is a built in function `max()` and the you will need to examine the vector `new.i` which is part of the `cv.uk.df` dataframe so you will need the `$` operator.  
+
+**Extension Exercise 2.6:** Edit the R code to produce a similar trend analysis for another country of your choice.  Note that the data set uses 3 character country codes e.g., SWE, USA see [wikipedia](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) for a complete list.  HINT: you will need to change the subset command and perhaps save to a new dataframe and then make sure you turn the cummulative counts into new counts.
+
+**Exercise 2.7:** Is `new.i` in the cv.uk.df dataframe an integer?  
+
+**Exercise 2.8:** How many people recovered in the UK on the 236th day of data collection.  Write an R statement to answer.  
+
+**Exercise 2.9:** Update the number of new deaths on the 236th day to zero.  
+
+![Answers?](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Answers.png)
+
+## 2. Exercise answers{#W2A}
+
+2.1: Although ~47.5K observations might seem large in reality this only occopies 2.6Mb which is <0.1% of the capacity of R on a fairly standard laptop or PC.
+
+2.2: Given the wide range of values for daily infections a log10 scale makes the plot easier to view, particularly for the smaller values. 
+
+2.3: There is a clear weekly cycle (or we can say the periodicity is 7-days).  This is true of many countries.  Why do you think this might be?  
+
+2.4: This shows the 95% confidence limit since there is an element of uncertainty as to exactly where the trend line should be.  The broader the confidence limit band (shaded pale orange) the less confident we are about the exact location of the trend.  Where the confidence limit potentially goes negative (which would be meaningless) we do not plot it.  This principally occurs for the daily new death rate trend since many values are (mercifully) close to zero.  
+
+2.5: `max(cv.uk.df$new.i)`  
+
+2.6: Good luck!  
+
+2.7: `new.i` is not an integer?  One way to find out is to use the built in function `is.integer()`.
+```{r}
+is.integer(cv.uk.df$new.i)
+```
+
+If you wanted `new.i` to be an integer you could need to code something like
+```{r}
+cv.uk.df$new.i <- as.integer(cv.uk.df$new.i)
+```
+or make an assignment like `cv.uk.df$new.i <- 10L` where L is short for Long which is a long story!  
+
+2.8: `cv.uk.df$recovered[236]`  Remember you need to use the $ operator to reference a particular vector (variable) in the dataframe cv.uk.df.
+
+Exercise 2.9: 
+
+```{r}
+cv.uk.df$recovered[236] <- 0
+```
+
