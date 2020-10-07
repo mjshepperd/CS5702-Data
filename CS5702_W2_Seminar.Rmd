@@ -11,9 +11,8 @@ date: 06/10/2020
 ## Seminar Learning Goals
 
 1. [Analyse covid-19 data trends](#W2S1)  
-2. [To run and extend some simple R code to compute book income](#W2S2)  
 
-3. [Exercise answers](#W2A) 
+2. [Exercise answers](#W2A) 
 
 
 ##0. Worksheet Introduction
