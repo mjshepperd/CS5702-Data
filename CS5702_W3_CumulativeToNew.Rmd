@@ -1,0 +1,50 @@
+---
+title: "ConvertCumulativeToNew"
+output: html_notebook
+author: Martin Shepperd
+date: 13/10/2020
+---
+
+This short R Notebook seeks to explain how the cumulative counts for covid-19 mortality and infection can easily be converted into new counts by processing the vectors.
+
+I will show the functioning for an extremely simplified case of 5 days.
+
+```{r}
+# Make a vector of cumulative infections
+cumInf <- c(0,1,1,4,6)
+
+# Turn it into a dataframe for easy viewing
+df1 <- as.data.frame(cumInf)
+```
+
+Now we want to subtract the previous day's infection from today's to give the count of new infections.  You could do this with a loop and sequence from start to end of the vector, but *remember* R is a functional language and has powerful vector processing capabilities.
+
+```{r}
+# The head function head(x,n) returns n elements from x
+# so -1 returns the entire vector less one
+head(cumInf,-1)
+
+# Likewise with tail, except starting from the bottom
+tail(cumInf,-1)
+```
+
+So we can put all this together in one neat statement to turn cumulative counts into new counts.
+
+```{r}
+newInf <- tail(cumInf,-1) - head(cumInf,-1)
+newInf
+```
+
+But we lack one thing, which is the first element.  Here we only have n-1 values, the first day's count is missing because effectively we need a day[0]=0.  So we need to add day[1] where the new count *is* the cumulative count, since there is no previous count.
+
+```{r}
+newInf <- c(cumInf[1],newInf)
+```
+
+And finally to add the new infections to the existing data frame df1
+
+```{r}
+# Add a new column to df1 using the cbind() function
+df1 <- cbind(df1, newInf)
+```
+
