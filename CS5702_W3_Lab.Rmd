@@ -1,0 +1,164 @@
+---
+# This is the YAML header
+title: "CS5702 W3 Lab Notebook"
+output: html_notebook
+author: Martin Shepperd
+date: 13/10/2020
+---
+
+## Worksheet Contents
+
+1. [Debugging and getting help](#W3S1)  
+2. [User defined functions](#W3S2)    
+3. [Exercise answers](#W3A) 
+
+##0. Worksheet Introduction
+
+<span style="color: darkorange;">**Pre-requisites**</span>
+
+You should:  
+
+1. have studied the Week 2 seminar+lab worksheet 
+2. be familiar (listened to/read) the Week 3 Lecture "Engineering or Hacking"
+3. be able to write, edit, save and re-open your own RMarkdown files  
+4. be able to load external files into a data frame
+
+This lab worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
+
+Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
+
+Remember, you are encouraged to explore and experiment.  Change something and see what happens!
+
+
+## 1. Debugging and getting help {#W3S1}
+
+1. find/read the relevant [cheatsheet](https://rstudio.com/resources/cheatsheets/)  
+2. perspiration e.g., see this [five step approach](https://medium.com/learn-love-code/stuck-on-a-coding-problem-here-are-5-steps-to-solve-it-8be04c4b4f19)
+3. talk it over with a fellow student
+4. module **FAQs** on Blackboard  
+5. [Stack overflow](https://stackoverflow.com/)  
+6. asking a member of the course team  
+
+For *more* suggestions visit the subsection 0.2 ["vi) Learn how to get help"](https://bookdown.org/martin_shepperd/ModernDataBook/W0-Prep.html#Help) in the Modern Data book.  
+
+**Exercise 3.1:** The following R code chunk contains a bug such that the R interpreter can't parse it.  What's wrong?  Can you fix it?
+
+```{r}
+# This code chunk contains an error
+var1 <- 5
+var2 <- 6
+var3 <- (var1 * var2)/(varI * 100)
+```
+
+**Exercise 3.2:** This R chunk has a logic error.  Can you detect it and then make the necessary correction?  It might help to look at the values of the variables in the Environment Pane.
+
+```{r}
+# This code chunk contains an error
+var4 <- 1
+var5 <- 2
+var6 <- (var4 + var5)/(var4 * var5)
+if(var6 < var4) print("var6 is larger than var4")
+if(var6 > var4) print("var6 is smaller than var4")
+```
+
+**Exercise 3.3:** The following R code chunk contains a bug such that yet again the R interpreter can't parse it.  What's wrong?  Can you fix it?
+
+```{r}
+# Here we are trying to create a numeric vector using
+# the combine c() function.  But there's an error.
+Vector1 <- c(3, 2, O, 2, 2, 6)
+```
+
+**Exercise 3.4:** The following R code chunk contains a bug such that yet again the R interpreter can't parse it.  What's wrong?  Can you fix it?
+
+```{r}
+x <- "1"
+Vector2 <- c(3, 2, 0, 2, 2, 6)
+Vector2 <- c(Vector2, x)
+sum(Vector2)
+```
+
+
+# 2. User defined functions {#W3S2} 
+
+> One of the best ways to improve your reach as a data scientist is to write functions. Functions allow you to automate common tasks in a more powerful and general way than copy-and-pasting.  
+> --- Grolemund and Wickham (2018) 
+
+
+**Define** a function called *halve* by declaring it.  Afterwards you can see it as a new R object in the Environment Pane.
+
+```{r}
+halve <- function(n)
+# This function takes a number and divides it by two
+{
+  functionResult <- n/2  
+  return(functionResult) 
+}
+```
+
+**Use** the function by calling it *after* it has been successfully declared.
+
+``` {r}
+halve(-8.3)
+```
+
+**Exercise 3.5:** Create a new function named `third()` that returns a third of its input argument n.  Check it works by testing it with various input values, e.g., `third(7)`.
+
+
+**Exercise 3.6:** Generalise the function to `fraction()` so that it now has two arguments where the first is the numerator and the second is the denominator.  Declare the function and again test it with different input values, e.g., `fraction(7, 10)`.
+
+
+**Exercise 3.7:** Write a new function `notNegative()` that takes a number as an argument and return TRUE if it's zero or more (i.e., not negative) and FALSE otherwise.  You will need an `if` statement that tests if a condition is true or not, e.g., `if (x<y) print("True") else print("True")`.  For more details use the help e.g., enter "if' into the search box of the Help Pane in RStudio.
+
+
+**Extension exercise 3.8:** What happens to your function if you give a value that's not numeric e.g., a character?  How might you protect your function against this eventuality?  This is sometimes known as defensive programming.  HINT: There's a built-in function `is.numeric()`. You can discover more about it using the help, e.g., type `?is.numeric`.
+
+
+## 3. Exercise answers{#W3A}
+
+
+![Answers?](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Answers.png)  
+
+
+3.1: Although superficially the code looks ok `var1` has been mistyped as `varI` on line 49.  Variable names need to be exact including the same case.
+
+3.2: The logical problem lies in the two if statements.  The relational operators (< and >) are the wrong way round, i.e., they're not consistent with the message from `print()`.  Making errors with `if` conditions is all too easy.  Be on the look out for this type of mistake.  
+
+3.3: As per 3.1 superficially the code looks ok but if you inspect the arguments to c() carefully you will see that insetad of a zero (0) an upper case O has been typed.  A hint is the editor has coloured it black rather than blue which RSTudio uses for numeric literals, black indicates it may be a variable name.  Since it's not in quotes R assumes it's the name of an object (variable) called `O` and since this has been declared it doesn't know what to do and gives up.  A solution is to replace `O` with 0.
+
+3.4: The problem is to do with type.  If you look carefully you can see that x is a character type because the number assigned to it is in quotation marks.  Therefore when we combine it with the numeric vector Vector2 this **coerces** the type to a character vector.  Remember every element of a vector must be the same type.  One the type has changed from numeric to character it's no longer meaningful to apply the arithmetic function `sum()` to it.
+
+3.5: This change should be straightforward.  Don't forget to edit the comment.  Obsolete and redundant comments are extremely harmful to the goal of understandable code.  
+
+```{r}
+third <- function(n)
+# This function takes a number and divides it by three
+{
+  functionResult <- n/3  
+  return(functionResult) 
+}
+```
+
+3.6: Here is a possible solution.  Note that there are now two arguments to this function.  The comment also been added to explain the purpose of each argument particularly because `n` and `m` are quite gnomic. 
+
+```{r}
+fraction <- function(n,m)
+# This function takes a number n (numerator) and divides it by m (denominator)
+{
+  functionResult <- n/m  
+  return(functionResult) 
+}
+```
+
+3.7: This function requires a logical test using an `if` statement. Again this function might seem trivial but it's good to add a comment to properly document it.  Remember the direction we're testing, i.e., *not* negative so zero or more should return TRUE.  When you test your function, e.g., `notNegative(-3)` remember to cover positive and negative cases and it's good practice to also consider the boundary case (which is zero).
+
+```{r}
+notNegative <- function(n){
+# This function checks if n is negative (returns TRUE) or not (returns FALSE)
+  if (n<0) return(FALSE) 
+  else return(TRUE)
+  }
+```
+
+
+3.8: Good luck!  
