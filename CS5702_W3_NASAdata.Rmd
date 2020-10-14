@@ -1,0 +1,86 @@
+---
+title: "R Notebook"
+output: html_notebook
+author: Martin Shepperd
+date: 12/10/2020
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook
+
+# Week 3 Seminar: Data sharing problems
+
+## Introduction
+
+This is an example of data quality problems based on some research I and some colleagues undertookback in 2012-13 (i.e., it predates, but anticipates, some of the FAIR data principles).
+
+Shepperd, M., et al., (2013). Data quality: Some comments on the NASA software defect datasets. *IEEE TSE*, 39(9), 1208-1215.  
+
+The original data sets were a series of csv files exported from a relational database.  A research archive then processed (and joined) the relations or tables in order to make a single combined table (universal relation) to facilitate machine learning research.  
+
+This table essentially comprised multiple cases --- one per software module --- of module characteristics e.g., size as a count of lines of code and many other properties.  Each case (or row) is labelled defective or not.  Researchers then sought to use machine learning algorithms, trained on some data, to predict whether new modules might be viewed as defect-prone or not. 
+
+Since the ability to predict whether software modules are likely to be defective or not would be immensely useful this has attracted a great deal of research effort.  However, all of this research is predicated on the data sets being of high quality.
+
+Since we're concerned about data quality a very useful R package is {validate}.  You can get more information from [here](https://arxiv.org/pdf/1912.09759.pdf){target="_blank"}.
+
+## Initialisation
+
+```{r}
+# We need to read from the {validate} package in the R library into memory
+# If you haven't installed it, then you need to run install.packages("validate") 
+# but do this only once.
+library(validate)
+
+# Store the GitHub address in fname
+fname <- "https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/CS5702_W3_NASAexample.csv"
+```
+
+
+## Import the 'NASA' Dataset
+
+I have simplified one of the NASA MDP defect data sets to illustrate some of the data quality issues and challenges.
+
+```{r}
+defectDF <- read.csv(file.choose(), header = TRUE)
+```
+
+
+## Check Data Quality
+
+We can look for referential integrity problems, i.e., validity is determined in the context of more than one variable.
+
+```{r}
+checkResults <- check_that(defectDF, NUMBER_OF_LINES >= LOC_BLANK + LOC_COMMENTS + 
+    LOC_TOTAL)
+checkResults
+
+```
+
+NB Confrontations is the number of rules or checks and fails is the number of violations.  The error and warning counts indicate whether an error or warning occurred during evaluation, and the last column shows the actual expression usedto evaluate the rule.
+
+Now to look for the problem data that fails this rule.
+
+```{r}
+# Take the output from check_that() and turn it into a dataframe f
+# or easier manipulation
+checkResultsDF <- as.data.frame(checkResults)
+problems <- subset(checkResultsDF, value==FALSE)
+```
+
+## Building rule sets 
+
+If we want to be more systematic and possibly use the checks repeatedly then it's helpful to build a rule set using the `validator()` function.
+
+```{r}
+# Build a rule set (of 2 rules) named rules
+rules <- validator(R1 = LOC_CODE_AND_COMMENT >= 0,
+  R2 = NUMBER_OF_LINES >= (LOC_BLANK + LOC_COMMENTS + LOC_TOTAL))
+
+# Now apply our rule set
+checkResults <- confront(defectDF,rules)
+checkResultsDF <- as.data.frame(checkResults)
+```
+
+**Exercise**
+
+Extend the rule set to check for other potential data quality problems.  
