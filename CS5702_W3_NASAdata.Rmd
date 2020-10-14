@@ -41,7 +41,7 @@ fname <- "https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/CS5702
 I have simplified one of the NASA MDP defect data sets to illustrate some of the data quality issues and challenges.
 
 ```{r}
-defectDF <- read.csv(fname, header = TRUE)
+defectDF <- read.csv(fname, header = TRUE, fileEncoding = 'UTF-8-BOM')
 ```
 
 
