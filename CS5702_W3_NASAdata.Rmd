@@ -81,6 +81,12 @@ checkResults <- confront(defectDF,rules)
 checkResultsDF <- as.data.frame(checkResults)
 ```
 
+Because the data frame is quite large it can be quicker to retrieve the problem results
+
+```{r}
+ProbResultsDF <- subset(checkResultsDF, value=="FALSE")
+```
+
 **Exercise**
 
 Extend the rule set to check for other potential data quality problems.  
