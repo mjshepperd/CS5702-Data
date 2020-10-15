@@ -154,7 +154,7 @@ fraction <- function(n,m)
 
 ```{r}
 notNegative <- function(n){
-# This function checks if n is negative (returns TRUE) or not (returns FALSE)
+# This function checks if n is negative (returns FALSE) or not (returns TRUE)
   if (n<0) return(FALSE) 
   else return(TRUE)
   }
@@ -162,3 +162,26 @@ notNegative <- function(n){
 
 
 3.8: Good luck!  
+
+This version tests if the argument is numeric using the built-in function `is.numeric()`.
+
+Without changing the return data type from logical which would turn the function into something very different I assume that non-numeric types cannot be considered as not negative so the function returns FALSE if either n isn't numeric or it isn't non-negative.  
+
+This requires a nested `if ... else`.
+
+```{r}
+notNegative <- function(n)  
+{
+# This function checks if n isn't numeric and returns FALSE 
+# else if n is numeric then 
+# tests if it is not negative ie zero or more (returns TRUE) else (returns FALSE)
+
+    if (!is.numeric(n))    # The ! is a logical not ie not numeric
+      return(FALSE)
+    else
+      if (n<0) return(FALSE)
+      else
+        return(TRUE)
+  }
+```
+
