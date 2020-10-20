@@ -3,8 +3,10 @@
 title: "CS5702 W3 Lab Notebook"
 output: html_notebook
 author: Martin Shepperd
-date: 13/10/2020
+date: 20/10/2020
 ---
+
+NB Updated (20/10/2020) to contain second simpler solution to the user-defined function `notNegative()`.  
 
 ## Worksheet Contents
 
@@ -183,5 +185,24 @@ notNegative <- function(n)
       else
         return(TRUE)
   }
+```
+
+A more elegant solution (thanks Hamad) removes the need for negation.
+
+```{r}
+notNegative <- function(n)
+{
+  # This function checks if n isn't numeric and returns FALSE
+  # else if n is numeric then
+  # tests if it is not negative ie zero or more (returns TRUE) else (returns FALSE)
+  
+  if (is.numeric(n))
+    if (n < 0)
+      return(FALSE)
+    else
+      return(TRUE)
+  else
+    return(FALSE)
+}
 ```
 
