@@ -1,0 +1,153 @@
+---
+# This is the YAML header
+title: "CS5702 W4 Lab Notebook"
+output: html_notebook
+author: Martin Shepperd
+date: 21/10/2020
+---
+
+
+## Worksheet Contents
+
+1. [R Recap](#W4S1)  
+2. [Finding data](#W4S2)  
+3. [EDA Example](#W4S3)
+4. [Exercise answers](#W4A) 
+
+##0. Worksheet Introduction
+
+<span style="color: darkorange;">**Pre-requisites**</span>
+
+You should:  
+
+1. have studied the Week 3 seminar+lab worksheet  
+2. be familiar (listened to/read) the Week 4 Lecture "Exploratory Data Analysis and Visualisation"  
+3. be able to load external files into a data frame  
+4. be able to write and edit simple user-defined functions    
+
+This lab worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
+
+Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
+
+Remember, you are encouraged to explore and experiment.  Change something and see what happens!
+
+
+## 1. R Recap{#W4S1}
+
+Let's recap some of the more *useful* R functions you will have already come across.  
+
+**Exercise 4.1:**  Suppose we want to get a quick overview of a data frame suggest three different functions that we could use.  Try them out with the built-in data set `mtcars`.
+
+**Exercise 4.2:** What are the dimensions (rows x columns) of your data frame?  
+
+**Exercise 4.3:** What are the median values for the numeric values in your data frame?  
+
+**Exercise 4.4:** Report on some measures of dispersion (variability) for your numeric values e.g., interquartile range, range and standard deviation (sd) and variance (var) which is simply  $$sd^2$$.  You will see `summary()` provides some information.  You can google or use the help facility in RStudio.  HINT: `sd()` is another built-in function along with `var()`.   What other functions might you use?  You might also check out Tukey's 5 number summary (minimum, lower-hinge, median, upper-hinge, maximum) `fivenum()`.  This is a more robust description than just a mean and standard deviation.
+
+**Exercise 4.5:** If applying a summary statistic function to each column one at a time is tedious and we want more flexibility than using the defaults of `summary()` then one option is the (**s**implified) list **apply** function `sapply()`.  Remember a data frame is a list of vectors (columns or variables).  The 
+
+```{r}
+# You need to provide your data frame name in this example
+lapply(???[, 1:length(???)], sd)
+```
+
+Be aware that sd expects a numeric type variable and your data frame might comprise a mixture.  WHat happens if a variable isn't numeric?
+
+**Extension Exercise 4.6:** Suppose you want to add more statistics to your apply-type function, over and beyond sd?  One way to achieve this is to have a user-defined function that contains the different statistics.  You need to return them as a list.  We will discuss this in Week 5.
+
+
+## 2. Finding data {#W4S2}
+
+
+**Exercise 4.7:** Using `data()` explore some of the built-in data sets.  Choose a data set that looks interesting to you, but that is *not* a time a series. 
+
+```{r}
+# To list all the built-in data sets
+data()
+data("mtcars")
+```
+
+NB If you have loaded a package like {ggplot2} you will see some additional data sets listed.
+
+
+
+
+## 3. An EDA example {#W4S3}
+
+**Exercise 4.8:** What are the dimensions of your data set?  Are there any missing data points?
+
+**Exercise 4.9** What are the names and data-type of each variable?  Which ones are numeric and which ones would we call categorical?  
+
+**Exercise 4.10** Try to show how each variable varies using summary statistics and then some kind of graphical representation.  For continuous data you might consider Tukey's 5 number summary or something similar.  This could be represented by a histogram or density plot or even a boxplot which is based on the 5 number summary.
+
+
+## 4. Exercise answers{#W4A}
+
+
+![Answers?](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Answers.png)  
+
+**4.1:** There are many built-in functions for examining a data frame, in part because this is such an important activity.  Sometimes this boils down to personal preferences. 
+
+```{r}
+# head() is simple and you can control the number of rows returned.
+head(mtcars)
+# tail() is also simple and perhaps is an antidote to the 'bias'(?) of always looking at the first few rows.
+tail(mtcars)
+# View() enables you to scroll through an entire data frame.  This works less well than there 1000s of rows.  Also unlike a spreadsheet you can’t manipulate any of the data.
+View(mtcars)
+# str() provides more information on the data types and typical? values.
+str(mtcars)
+```
+
+**4.2:** `str()` provides more information on the data types and the data frame dimensions.  If you just want the dimensions you can use `dim()`.
+
+```{r}
+# str() also provides information on the data frame dimensions.  If you just want the dimensions you can use dim()
+str(mtcars)
+dim(mtcars)
+```
+
+**4.3:** You could find the median values for the numeric values in your data frame one at a time, though this might get a bit repetitive/painful.  Alternatively you can use the `summary()` built-in function which can take a data frame as an argument.  Note that it returns multiple summary statistics for each variable.  
+
+```{r}
+median(mtcars$mpg)
+# and then continue with each variable (column) one by one ...
+# or you might use the summary() function.
+summary(mtcars)
+```
+
+**4.4:** Summary() gives the range (max-min), interquartile range (Q3-Q1) as a standard default. `IQR()` is another built-in function along with the Tukey five number summary function `fivenum()`.  You can look up in the Help pane for more information. 
+
+
+**4.5:** 
+```{r}
+sapply(mtcars[, 1:length(mtcars)], sd)
+```
+
+Effectively the expression for the columns to use for `sapply()` function is saying search from 1 to the length of the list (ie all the columns of the data frame). If they're not numeric then the sd function returns NA and you get a warning message that NA is being coerced into the result list.  
+
+NB `sapply()`is actually a wrapper function for `lapply()`.  It formats the output more elegantly (where possible).  The apply family of functions are very useful for applying a function to multiple instances e.g., a vector or a data frame.  They're much faster than the equivalent for-loop and easier to code.
+
+**Extension Exercise 4.6:** Suppose you want to add more statistics to your apply-type function, over and beyond sd?  One way to achieve this is to have a user-defined function that contains the different statistics.  You need to return them as a list.  **We will discuss this in Week 5.**  
+
+**4.7** As you will see there are many built in data sets.  In addition some packages come with their own.  They generally quite small since they're mainly for teaching purposes.  
+
+Make sure you differentiate between time series and other data sets, mainly because there's often only a single variable for a TS (less interesting) and we haven't yet covered time series analysis and forecasting.   
+
+**4.8** You can get the dimensions via `str()` or `dim()`.
+
+**4.9** You can either see this information from `str()` or `colnames()`
+
+**4.10:** 
+Remember before you decide on how to show the variability or dispersion of a variable decide what data-type it is.  Statistics such as IQR and sd can be appropriate for numeric variables but make no sense if they're categorical.  For frequencies `table()` works simply and effectively.  
+
+To do a boxplot using ggplot you could use the following R:
+
+```{r}
+ggplot(mtcars, aes(y=mpg)) + 
+geom_boxplot() +
+ggtitle("Boxplot of mpg")
+```
+
+
+
