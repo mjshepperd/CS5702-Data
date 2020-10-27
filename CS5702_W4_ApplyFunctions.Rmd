@@ -1,0 +1,44 @@
+---
+title: "Using apply in R"
+output: html_notebook
+author: Martin Shepperd
+date: 23/10/2020
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook that introduces the apply family of functions for easily and efficiently processing lists.
+
+
+```{r}
+# Initialisation
+data(mtcars)
+View(mtcars)
+```
+
+Using the generic summary function
+
+```{r}
+summary(mtcars)
+```
+
+If we want to control our analysis more precisely or want something more specific than just applying `summary(mtcars)` we can use the very useful family of **apply() functions**.  This allows to apply a function e.g., `sd()` repeatedly to everything (every vector) in the list.  This can be very convenient e.g., a data frame is a list of vectors so if we give a data frame as an argument to the apply function it will apply the specified function to every vector (ie every column) in the data frame.
+
+Imagine we want the standard deviation (sd) of every variable/column/vector of our data frame.  For this task we can use sapply.
+
+```{r}
+# Using sapply which tries to nicely format the result but is otherwise similar to lapply.
+sapply(mtcars, sd)
+```
+
+What if we want several statistics or something not built in to R?  Then we can use a user-defined function.
+
+```{r}
+# Defining a new function
+mySummary <- function(x)
+# Compute the sd and median of x and return this as a list
+{
+  summaryList <- list(sd(x), median(x)) 
+  names(summaryList) <- c("SD", "Median")
+  return(summaryList)
+}  
+```
+
