@@ -1,0 +1,94 @@
+---
+title: "CS5801 Coursework Template Proforma"
+author: "student-id"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_notebook
+version: 1.0
+---
+
+# 0. Instructions 
+
+*1. Remove the (italicised) guidance text but keep the section headings.*  
+*2. Add as many chunks of R code as required.*  
+*3. Add descriptions of your analysis plans and explanations of your code and findings.  Please be detailed and where you have made choices explain the rationale for them.*  
+*4. Write your report using RMarkdown.  For guidance see a [helpful blog](https://www.dataquest.io/blog/r-markdown-guide-cheatsheet/#tve-jump-17333da0719) or use the R Markdown cheatsheet which can be accessed from within RStudio by selecting `Help > Cheatsheets > R Markdown Cheat Sheet`.*  
+*5. Your report should be clearly and professionally presented with appropriate use of cited external sources. (5 marks)*  
+*6. It should also be easy to understand, with well-documented code following the principles of literate programming. (5 marks)*  
+
+```{r}
+# Add code here to load any required libraries with `library()`.  
+# We suggest you use `install.package()` for any required packages externally to this document 
+# since installation only need be done once.
+```
+
+
+# 1. Organise and clean the data
+
+## 1.1 Subset the data into the specific dataset allocated
+ 
+*A description of the data set provided, its contents and which subset you should select is documented in the assessment brief at ???.pdf*  
+*Use R code to correctly select the subset of data allocated. (5 marks)*  
+
+```{r}
+# Code to select the student specific team combination.  
+# Feel free to change it including the data frame name.
+# 
+# my.2teams.df <- subset(analysis.data, teamID.x=="???" | teamID.x=="???")
+```
+
+
+## 1.2 Data quality analysis
+ 
+*Provide a description of a comprehensive plan to assess the quality of the data, and document your findings.  Include all variables/columns (5 marks) from the data set and provide a full implementation (5 marks).  NB even if no data quality issues are identified you should still check and report.*
+
+ 
+## 1.3 Data cleaning  
+ 
+*Explain any data quality issues found in 1.2 (5 marks), justify and document the responses made (if any) (5 marks).*
+
+
+# 2. Exploratory Data Analysis (EDA)
+
+## 2.1 EDA plan
+
+*Outline a suitable plan to explore, describe and visualise your data. (5 marks)*  
+
+
+## 2.2 EDA and summary of results  
+
+*Undertake and summarise the findings of your data exploration, particularly with respect to the research questions.  Use appropriate summary statistics (uni- and multi-variate) and visualisations. (10 marks)*
+
+
+## 2.3 Additional insights and issues
+
+*Highlight potential further issues or insights uncovered in 2.2.  This might include follow up to findings from your initial EDA.  We accept that the boundary between 2.2 and 2.3 is somewhat arbitrary so use your judgement and maximise good structure and readability. (5 marks)*
+
+
+# 3. Modelling
+
+## 3.1 Build a model for player salary
+
+*Given the research question (i.e., the target attribute of salary) outline an analysis plan that incorporates/references any findings from the data cleaning (1.3) and EDA (2.2)  (5 marks). Use R to build a suitable model (10 marks).*  
+*NB Submissions where suitable models do not have good fit due to the nature of the data will not be penalised.*  
+
+
+## 3.2 Critique model using relevant diagnostics
+
+*Offer an interpretation of the model characteristics, goodness of fit and graphical diagnostics (5 marks) for the model built in 3.1. Explain any potential weaknesses (5 marks).*
+
+
+## 3.3 Suggest improvements to your model
+
+*Based on the findings in 3.2 articulates possible alternative approaches to address them (5 marks).*
+
+
+# 4. Extension work
+
+## 4.1 Model the likelihood of a player having scored a Hit (using the hit.ind variable provided).
+
+*Given this second research question (i.e., involving the binary target attribute) provide a plan of analysis based on relevant EDA for this attribute (10 marks). The model is described, explained and critiqued (10 marks).*
+*NB Submissions where suitable models do not have good fit due to the nature of the data will not be penalised.* 
+
+# References  
+
+*Add any references here. NB You can either do this manually or automatically with a `.bib` file (which then must be submitted along with your `.Rmd` file).  See the RMarkdown [documentation](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html) for guidance.*    
