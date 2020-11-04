@@ -1,0 +1,166 @@
+---
+# This is the YAML header
+title: "CS5702 W6 Lab Notebook"
+output: html_notebook
+author: Martin Shepperd
+date: 03/11/2020
+---
+
+## Worksheet Contents
+
+1. [Some more useful R - factors](#W6S1)  
+2. [Building a simple shiny web app](#W6S2)  
+3. [Exercise answers](#W6A)  
+
+##0. Worksheet Introduction
+
+<span style="color: darkorange;">**Pre-requisites**</span>
+
+You should:  
+
+1. have studied the Week 5 seminar+lab worksheet  
+2. be familiar (listened to/read) the Week 6 Lecture and Seminar that gives an overview of the purpose and functionality of shiny  
+   
+This lab worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
+
+Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
+
+Remember, you are encouraged to explore and experiment.  Change something and see what happens!
+
+
+## 1. Some more useful R - factors{#W6S1}
+
+By now we have come across a range of different data types built into R such as numeric.
+
+
+**Exercise 6.1:** What other built-in data types can you think of that are used by R?
+
+
+**Exercise 6.2:** Create a character vector named gend that comprises a mix of 'M', 'F' and '?' so that it contains 20 elements.
+
+
+**Exercise 6.3:** Extract the frequency counts of the different categories of `gend`.
+
+
+**Exercise 6.4:** In this case we have relatively few categories (levels) and also the categories are important for an analysis where we might want to make comparisons e.g., do males and females differ in some respect?  Convert `gend` into a factor.  HINT look at `as.factor()`.
+
+
+**Exercise 6.5:** Recreate `gend` with 30 elements using the `rep()` function as per the answer to 6.2.  Leave `gend` as a character vector.  Create a new numeric vector `height` also with 30 elements.  You can generate random heights.  
+
+
+**Exercise 6.6:** Convert `gend` into a factor.   Then using gend as a factor compare the heights of the three gender groups of people.  Use a boxplot.  HINT `boxplot()` can take as an argument the dependent variable (in this case height) and the level (in this case `gend`) so use `boxplot(height~gend)`
+
+
+
+## 2. Building a simple shiny web app {#W6S2}
+
+The first thing is to install the shiny package into your R library.  This need only be done once unless you wish to update it (e.g., if there's a new release which can happen from time to time).  
+
+```{r}
+install.packages("shiny")
+```
+
+Then you need to load the shiny functions contained in this package from your library into memory at the start of each session.  Effectively each time you run your shiny app this is a new session so you will always have `library(shiny)` as the first statement of any shiny app.
+
+**Exercise 6.7**
+
+Now to create your first shiny app.  Create a new file that is a shiny web app and provide a convenient directory location.  This creates a template.  Then copy and paste the code below but note you **cannot** directly execute it.
+
+=====CUT HERE======
+# Load the library
+library(shiny)
+
+# Define the UI function
+ui <- fluidPage("Modern Data is my favourite module!")
+
+# Define the server logic (empty)
+server <- function(input, output) {}
+
+# Call to shinyApp() which returns a Shiny app object
+shinyApp(ui, server)
+=====CUT HERE======
+
+Use the Run App button at the top of the Edit Pane to execute the app.  
+
+
+**Exercise 6.8**
+
+Update the message to something of your choosing, save and re-run your app.
+
+
+**Exercise 6.9**
+
+Create a new app using RStudio and place it in a new directory.  Use their default template though you may wish to edit the comments to something appropriate.  Check you can run their app successfully.  Then edit the server function to to produce a histogram of variable/column 1 of the `faithful` data set i.e., `eruptions`.  HINT if you want to better understand the built in data set do: 
+
+```{r}
+data("faithful")
+View(faithful)
+```
+
+
+
+
+## 3. Exercise answers{#W6A}
+
+
+![Answers?](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Answers.png)  
+
+**6.1:** By now you should be familiar with the atomic data types of numeric, character, logical and integer.  These can then be composed into more complex data structures such as vector, matrix, list and data frame (for a refresher see [Section 2.4](https://bookdown.org/martin_shepperd/ModernDataBook/C2-Complex.html) of the Modern Data book).  
+
+
+**6.2:** You could construct gend manually using the combine function `c()`.
+
+```{r}
+gend <- c('M','F','?','M','F','?','M','F','?','M','M','F','?','M','F','?','M','F','?','M')
+```
+
+or with less effort use the replicate function `rep()` coupled with `c()`
+
+```{r}
+gend <- rep(c('M','F','?'), length.out=20)
+```
+
+You can check what type it is by looking in the Environment Pane.
+
+
+**6.3:** An easy way to get the frequency counts is via `table()`.
+
+```{r}
+# Display the frequency counts of the character vector gend
+table(gend)
+```
+
+
+**6.4:** You can apply the `as.factor()` function to `cv`
+```{r}
+# convert gend from character vector to a factor
+gend <- as.factor(gend)
+# to check you can list the levels in the factor
+factor(gend)
+```
+You can also check that gend has changed by again examining the Environment Pane.  
+
+
+**6.5** I assume heights are distributed normally so will use `rnorm()`.
+
+```{r}
+# Create a numeric vector of 30 random heights
+height <- rnorm(n = 30, mean = 1.7, sd = 0.15)
+# Create a new character vector gend and convert to a factor
+gend <- rep(c('M','F','?'), length.out=30)
+gend <- as.factor(gend)
+```
+
+**6.6:** For simplicity we are using base R graphics to do the boxplots but once you appreciate how it works I suggest you move on to {ggplot2}.
+
+```{r}
+# convert to a factor
+gend <- as.factor(gend)
+#generate side by side boxplots to compare the heights for the three levels
+boxplot(height~gend)
+```
+
+
+
+**6.7** If your shiny app isn't running smoothly, check out the video on Loom (https://www.loom.com/share/04bbe52d69474d93b99f0459fd83ecb0?sharedAppSource=personal_library).  
+
