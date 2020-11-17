@@ -139,7 +139,7 @@ val.check1 <- check_that(dataQualEg1.DF, age > 0, age < 115, married == "Y" | ma
 ```{r}
 val.check1 <- check_that(dataQualEg1.DF, 
                          age > 0, 
-                         age > 115, 
+                         age < 115, 
                          married == "Y" | married == "N", 
                          if (married == "Y") age > 17)   # check married people are adults
 ```
