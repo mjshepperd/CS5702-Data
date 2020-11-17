@@ -1,0 +1,148 @@
+---
+# This is the YAML header
+title: "CS5702 W7 Lab Notebook"
+output: html_notebook
+author: Martin Shepperd
+date: 13/11/2020
+---
+
+## Worksheet Contents
+
+1. [Another data quality example](#W7S1)  
+2. [Exercise answers](#W7A)  
+
+##0. Worksheet Introduction
+
+<span style="color: darkorange;">**Pre-requisites**</span>
+
+   
+This lab worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
+
+Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
+
+Remember, you are encouraged to explore and experiment.  Change something and see what happens!
+
+
+## 1. Another data quality example]{#W7S1}
+
+It uses fictitious data contained in a pre-saved R data object dataQualEg1.DF.  
+
+We will use the package {validate}.  You should have used it before, but if not you will need to run `install.packages("validate")`.
+
+```{r}
+# Load required libraries
+library(validate)
+```
+
+
+**Exercise 7.1:** What does {validate} do?  Why is it useful for data quality checking in R?  
+
+
+First you need to load the R data object (I've put the .Rda file onto GitHub).
+
+```{r}
+# Load from GitHub repo
+load(url("https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/CS5702_W7_DataQualExample.Rda"))
+
+# Check the structure of the data frame
+str(dataQualEg1.DF)
+```
+
+
+## Get an overview of the data
+
+**Exercise 7.2:** How many observations/cases are there?  Use an R function to find out.
+
+
+We can 'eyeball' the data with `View()` but it's hard to see everything even if there are only two variables.  
+
+```{r}
+summary(dataQualEg1.DF)
+```
+
+
+**Exercise 7.3:**  The spread of ages looks problematic.  Why?
+
+
+Also let's look at the levels/ categories for `married` since `summary()` is less informative for a character vector.
+
+
+**Exercise 7.4:**  What is a simple function to examine `married`?  Do you see any problems?
+
+
+
+## Data quality checking
+
+Let's check more systematically using {validate}.
+
+```{r}
+## Data quality checking
+
+val.check1 <- check_that(dataQualEg1.DF, age > 0, age > 115, married == "Y" | married == "N")
+
+# Produce a bar chart of the quality rule failures
+barplot(val.check1)
+```
+
+**Exercise 7.5:** What is the problem with our validation rules?  Correct the error.  
+
+
+**Exercise 7.6** What other rules are missing?  Can you think of any referential integrity checks?  
+
+## Some data cleaning
+
+```{r}
+dataQualEg1.DF$married[dataQualEg1.DF$married == "n"] <- "N"
+table(dataQualEg1.DF$married)
+```
+
+**Exercise 7.7**
+
+Complete the cleaning of `married`.  HINT what other levels are redundant for married`?  What will you do for ages in excess of 115?
+
+
+
+## 2. Exercise answers{#W7A}
+
+
+![Answers?](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Answers.png)  
+
+
+**7.1:**  The package {validate} allows you to define checking or validation rules and apply them to your data set(s).  For more information visit the very useful and detailed [Introduction](https://cran.r-project.org/web/packages/validate/vignettes/introduction.html).    
+
+
+**7.2:** 
+```{r}
+nrow(dataQualEg1.DF)
+```
+NB `length(dataQualEg1.DF)` gives the number of variables/columns of a data frame, *not* the number of rows because technically a data frame is a list of vectors and the `length()` function returns the length of a list, which is not what you want in this instance.  
+
+
+**7.3:** `age` looks problematic since the maximum age is 123.  The oldest person to have lived was 122 so 123 is highly unlikely.  
+
+
+**7.4:**
+```{r}
+table(dataQualEg1.DF$married)
+```
+
+**7.5:**
+
+We should test for less than 115 not greater than!
+
+```{r}
+val.check1 <- check_that(dataQualEg1.DF, age > 0, age < 115, married == "Y" | married == "N")
+```
+
+
+**7.6:**
+```{r}
+val.check1 <- check_that(dataQualEg1.DF, 
+                         age > 0, 
+                         age > 115, 
+                         married == "Y" | married == "N", 
+                         if (married == "Y") age > 17)   # check married people are adults
+```
+
+
+**7.7** A simple solution for ages > 115 is to replace them with NA since it's difficult to know what the correct value should be.  Another possibility is data imputation (as discussed in the Week 7 Lecture).  A naive approach could be to use the mean or median.  
