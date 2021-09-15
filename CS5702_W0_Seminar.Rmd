@@ -1,11 +1,10 @@
 ---
-# This is the YAML header
 title: "CS5702 W0 Seminar Notebook"
-output: html_notebook
-author: Martin Shepperd
-date: 24/09/2020
-# This is the end of the YAML header 
-# (use it as a template for your rmarkdown files)
+author: "Martin Shepperd"
+date: "24/09/2020"
+output:
+  html_notebook: default
+  pdf_document: default
 ---
 
 Note that a longer (i.e., with far more background information) version of this Worksheet is available in the module book [Modern Data](https://bookdown.org/martin_shepperd/ModernDataBook/W0-Prep.html#C0_SoftwareInstall).  This Seminar Worksheet contains the *extracted* the practical exercises.
