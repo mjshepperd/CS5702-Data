@@ -1,7 +1,7 @@
 ---
-title: "CS5702 Week 0 Lab Woksheet"
+title: "CS5702 Week 0 Worksheet"
 author: "Martin Shepperd"
-date: "13/09/2021"
+date: "21/09/2021"
 output:
   html_document:
     toc: true
@@ -11,12 +11,12 @@ output:
 
 Note that a longer (i.e., with far more background information) version of this Worksheet is available in the module book [Modern Data](https://bookdown.org/martin_shepperd/ModernDataBook/W0-Prep.html#C0_SoftwareInstall).  This Worksheet contains the *extracted* the practical exercises.
 
-This seminar worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
+This Worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
 
-Of course, there is a bootstrapping problem in that our first step is to install R and RStudio for which you need to view the Seminar Worksheet.  Start (I assume you have already) by viewing the pre-rendered (by me, Martin) version which has the suffix `.nb.html`.  Most likely the file is called `CS5702_W0_Lab.nb.html` unless you have changed it.
+Of course, there is a bootstrapping problem in that our first step is to install R and RStudio for which you need to view the Worksheet.  Start (I assume you have already) by viewing the pre-rendered (by me, Martin) version which has the suffix `.nb.html`.  Most likely the file is called `CS5702_W0_Lab.nb.html` unless you have changed it.
 
 
-## Seminar Learning Goals
+## Worksheet Learning Goals
 
 1. [Install R and RStudio on your computer](#W0L1)
 2. [Modify some R code to check your installation](#W0L2) 
@@ -79,13 +79,13 @@ The intention is markdown languages including RMarkdown are human readable.  The
 ![Code chunks and how to run them in RStudio](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/W0_Seminar_RSt_CodeChunk.png)
 
 
-2.4. **Exercise** Run the code by clicking the green triangle in the top right hand corner of the grey code chunk in RStudio (i.e. not the html file).  
+2.4. **Exercise** Run the code by clicking the green triangle in the top right hand corner of the grey code chunk in RStudio (i.e., not the html file).  
 
 2.5. **Exercise** Now change it so it computes two plus two multiplied by 5 by editing the code in the Edit Pane.  
 
 Let's move on to a more complex and more useful R program.  Don't worry if you don't follow all the details yet, as our main purpose is to get you used to RStudio and to begin to see the power of R. 
 
-2.6. The R program below generates two vectors of 1000 random numbers that both follow a normal (Gaussian) distribution.  They share the same standard deviation `sd` of 2, but differ in that they have means or centres of 10 and 11 respectively.  The program compares the two vectors `r.1` and `r.2` **graphically** by plotting the kernel densities.  These are a kind of smoothed histogram.
+2.6. The R program below generates two vectors of 1000 random numbers that both follow a Normal (Gaussian) distribution.  They share the same standard deviation `sd` of 2, but differ in that they have means or centres of 10 and 11 respectively.  The program compares the two vectors `r.1` and `r.2` **graphically** by plotting the kernel densities.  These are a kind of smoothed histogram.
 
 ```{r, results='hide'}
 # A simple R program to compare two vectors of random numbers
@@ -113,27 +113,27 @@ lines(density(r.2), col = "red")   # Overlay density of r.2
 
 ## 3. Writing and running your own R code {#W0L3}
 
-3.1. If you find typing/pasting R code into the Console Pane every time you want to execute it, is becoming tedious then you're right!  From the top menu bar choose File > New File > R Script and an empty pane will appear in the top right of the window named 'Untitled1' until you Save it as something.  
+3.1. If you find typing/pasting R code into the Console Pane every time you want to execute it, is becoming tedious then you're right!  From the top menu bar choose File > New File > R Script and an empty pane will appear in the top right of the window named `'Untitled1'` until you Save it as something.  
 
-3.2. Note the file will be named `<yourfilename>.R`.  You can get RStudio to save the file somewhere convenient by selecting the Session > Set Working Directory option.  You execute the R, not by pressing Return as in the Console Pane, but by selecting the code you wish to execute and then clicking Run.
+3.2. Note the file will be named `<yourfilename>.R`.  You can get RStudio to save the file somewhere convenient by selecting the Session > Set Working Directory option.  You execute the R code, not by pressing Return as in the Console Pane, but by selecting the code you wish to execute and then clicking Run.
 
 ![Saving your R code in RStudio](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/C0_RStudioSave.png) 
 
-Once, you have successfully saved the R program you can start to experiment
+Once, you have successfully saved the R program you can start to experiment.  
 
-3.3. **Exercise:** Try different standard deviations and means for the randomly generated data.  You can also explore other ways of visualising the distributions, such as histograms and boxplots.  Try `hist(r.1); hist(r.2)` and `boxplot(r.1, r.2)`.  NB slightly annoyingly, the `hist()` function will only take a single variable as an argument, whereas `boxplot()` will accept multiple arguments.  Also note that `;` is used when we are not using an end-of-line or carriage return.
+3.3. **Exercise:** Try different standard deviations and means for the randomly generated data.  You can also explore other ways of visualising the distributions, such as histograms and boxplots.  Try `hist(r.1); hist(r.2)` and `boxplot(r.1, r.2)`.  NB slightly annoyingly, the `hist()` function will only take a single variable as an argument, whereas `boxplot()` will accept multiple arguments.  Also note that `;` is used to separate R statements, when we are not using an end-of-line or carriage return.
 
-3.4. When you Quit RStudio you will be prompted to "Save your workspace image".  I strongly advise you to select **"Don't Save"** to prevent carryover effects from one R session to another.  Under **Preferences > General > Workspace** you can set a Never save workspace option to prevent you having to answer every time you Quit RStudio. 
-
-Although initially RStudio might seem quite complicated, it's an extremely useful and versatile Integrated Development Environment (IDE) for R.  You could also use it for other languages such as Python and Stan.
-
-
+3.4. When you Quit RStudio you will be prompted to "Save your workspace image".  I strongly advise you to select **"Don't Save"** to prevent carryover effects from one R session to another.  Under **Preferences > General > Workspace** you can set a Never save workspace option to prevent you having to answer every time you Quit RStudio.   
+  
+Although initially RStudio might seem quite complicated, it's an extremely useful and versatile Integrated Development Environment (IDE) for R.  You could also use it for other languages such as Python and Stan.  
+  
+  
 ## 4. Follow up information on RStudio {#W0L4}
 
 A lot more information can be found about RStudio:  
 - see this [tutorial](https://data-flair.training/blogs/rstudio-tutorial/) for more detail including loading and managing data (something we will cover in the next few weeks)  
 - the RStudio IDE [cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/rstudio-ide.pdf)  
-- [blog](https://blog.rstudio.com/2020/02/25/rstudio-1-3-integrated-tutorials/) from the RStudio team about the release of v1.3  
+- [blog](https://blog.rstudio.com/2021/01/19/announcing-rstudio-1-4/) from the RStudio team about the release of v1.4  
 
 
 
