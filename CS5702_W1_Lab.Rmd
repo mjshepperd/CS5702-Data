@@ -1,0 +1,281 @@
+---
+# This is the YAML header
+title: "CS5702 W1 Worksheet Notebook"
+output: html_notebook
+author: Martin Shepperd
+date: 22/09/2021
+# This is the end of the YAML header 
+# (use it as a template for your rmarkdown files)
+---
+
+# 0. Worksheet Topics
+
+1. [Seminar: Exploring R using R](#WS1)  
+2. [Lab: Create, save and edit R Notebooks using RStudio](#WS2)  
+3. [Lab: Some Basic R practice](#WS3)  
+4. [Lab: Appendix - extra notes on YAML](#YAML_appendix)  
+
+
+**Pre-requisites**
+
+1. You should have completed the Week 0 "Getting Ready" materials  
+2. You should have listened to the Week 1 Lecture "Modern Data Introduction"  
+  
+  
+This Worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
+
+Whenever you click **Preview** in the RStudio menu it will render this markdown into nicely formatted html which you can look at it in the Viewing Window in RStudio or via any web browser.  You may find this easier to read, however, you must edit the .rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
+
+It comes in two parts:  
+
+1. material to support the [Seminar](#WS1)  
+2. self-study material to check your understanding for the [Lab](#WS2)
+
+You are encouraged to explore and experiment.  Change something and see what happens!
+
+
+## 1. Seminar: Exploring R using R{#WS1}
+
+
+### 1.1 Some Cute Examples using R  
+
+- [iris clustering](https://shiny.rstudio.com/gallery/kmeans-example.html)  
+- [football](https://www.datofutbol.cl/soccer-animate-r-package/)  
+- [buses in Minnesota](https://shiny.rstudio.com/gallery/bus-dashboard.html)  
+
+
+### 1.2 Demand for R programmers  
+
+How useful are R skills and tools?  An [analysis](https://towardsdatascience.com/what-are-the-in-demand-skills-for-data-scientists-in-2020-a060b7f31b11) of 2681 data scientist job postings from 8 North American cities on January 25th, 2020 indicated the top 10 tools required by the employers are:
+
+    Python (62%)
+    SQL (40%)
+    R (39%)
+    Spark (21%)
+    Cloud (20%)
+    Amazon Web Services (20%)
+    Java (19%)
+    Tensorflow (16%)
+    Hadoop (15%)
+    SAS (13%)
+
+The data was collected by analysing online job adverts for data scientists on the Indeed website in North America.  Note that Tools is a categorical and multi-valued attribute of a job listing, i.e., one listing could have zero or more tool categories associated, thus the percentages do not sum to 100%.  NB 14% of the sampled job listings are excluded (since it is stated that only 86% of adverts identified skills or tools).  
+
+**Exercise 1.1:** It's important to look at the data critically, though we must accept nothing is certain or perfect!  What questions or concerns might you have?  
+
+
+Since we're thinking about data and data analysis, it would be helpful to visualise the data.  Unfortunately, we don't have access to the raw data so we will need to reproduce it.  Therefore I have 'scraped' some of the data from their article and plugged this into R (see below).  Don't worry about the coding details for the present. 
+
+```{r}
+# Reproduce the data from the January 2020 required tools for Data Scientists
+
+percent <- c(62,40,39,21,20,20,19,16,15,13)
+skill <- c("Python","SQL","R","Spark","Cloud","AWS","Java","TensorFlow","Hadoop","SAS")
+# Generate the pie chart
+pie(percent, main="Pie chart of in demand data scientist tools", labels=skill)
+```
+
+**Exercise 1.2:** Using the `clockwise` parameter change the order of display.  Type `?pie` for help if required.  
+
+**Exercise 1.3:**  If you look at the help for the `pie()` function you will read "Pie charts are a very bad way of displaying information."  Why do you think this is so?  [Prompt: what might be the impact of multi-valued data?]
+
+
+```{r}
+# NB we have already reproduced the data: percent and skill come from the previous piechart chunk
+
+# Generate a bar chart
+barplot(percent, 
+main="Bar chart of in-demand Data Scientist tools (Jan 2020)", 
+sub = "Source: https://j.mp/2Ga8CD1",
+ylab="Percentage of listings that mention tool", 
+names.arg=skill, 
+cex.names = 0.6,                                     # shrinks text size so fits on x-axis
+col="darkolivegreen",                                # colour of the bars  
+density=c(100, 50, 100, 50, 50, 50, 50, 50, 50, 50)) # Shades Python and R in a darker colour
+```
+
+**Exercise 1.4:** Hopefully you consider this bar chart to be an improvement, but it's not perfect. Can you think of any further improvements or clarifications?  (Hint: some of the bars are quite hard to read off the exact proportion.)  Remember that if the goal of Data Science is to *communicate* findings, then how we present information is of vital importance.  For this reason we will return to this topic ([Chapter 4](#Chap4EDA)) to dig deeper on data visualisation.  
+
+**Exercise 1.5:** The same [article](https://towardsdatascience.com/what-are-the-in-demand-skills-for-data-scientists-in-2020-a060b7f31b11) also lists the top 50 skills required e.g., machine learning, statistics, ...  Scrape (estimate the percentages for the top 10) and produce equivalent charts to those for these skills.  
+
+**Extension exercise 1.6:** The above two plots are performed using base R (which is perfectly adequate for simple charts).  A powerful and flexible alternative is the {ggplot} package.  How might you reproduce these charts using ggplot?  NB This exercise is primarily intended for those who already have some knowledge of R or who consider themselves proficient programmers.  
+
+
+
+## 2. Lab: create, save and edit R Notebooks using R~Studio{#WS2}
+
+This worksheet is written using RMarkdown and saved as an [R Notebook](https://blog.rstudio.com/2016/10/05/r-notebooks/).
+
+It is an extremely convenient way to combine explanatory text written in a very simple markdown language and interactive R.  We will use it for all non-trivial R code in this module, for seminars and you will need it for your coursework (CS5801) and exam (CS5802).  
+
+1. You need a YAML header (see this file for an example, or click [here](#YAML_appendix) for more information).
+2. You can enter plain text as-is.  
+3. You can use `#`, `##`, etc for different heading levels.  Notice how RStudio automatically generates a nested navigation pane for you.  
+4. If you start a line with `1. ` etc this generates an enumerated list (as per this example).  There must be a space between the full stop and the text.  If you just want bullets you can use `- ` instead.  
+    - You can nest lists by indenting by 4 spaces.  
+6. You can insert a code chunk by clicking the green *Insert (Code Chunk)* button on the Edit Pane toolbar or by pressing *Cmd+Option+I*.  Or you could, if you really want, type the three backticks followed by the language in braces, then the code and close the chunk with another three backticks.  
+
+There's a very helpful guide on RMarkdown from RStudio [here](https://rmarkdown.rstudio.com/lesson-2.html).  
+
+Below is an example of an R code chunk which can be executed from within the R Notebook.  You can do this by clicking the green triangle to the top right of the chunk area within the Notebook.  If you wanted to run all the code up until, and including, this code chunk you can click the grey triangle with the green bar ^[In this case there is no previous code so it would make no difference but often RMarkdown contains multiple code chunks.].
+
+
+```{r}
+# This is an R code chunk
+print("Hello cruel world")
+```
+
+**Exercise 2.1:**  Edit the R code to output "Goodbye cruel world" or some other message.  Re-run the code chunk.  
+
+**Exercise 2.2:**  Save the edited RMarkdown notebook  When you save the notebook, an HTML file containing the code and output will also be saved (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).  The raw R markdown has a suffix .rmd and the rendered HTML will have a suffix nb.html.
+
+Check you can see the html version.  The preview shows you a rendered HTML copy of the contents of the editor. The output from the R code chunks is whatever was generated when it was last run in the RStudio.  You can also view the file in any web browser.  
+
+**Exercise 2.3:**  Add a new 3rd level heading named "My RMarkdown Exercise" here.  Add an anchor label `{#<anchor-name>}`.  Now at another point in the document you can link to your anchor, as follows: `[text to display]` immediately followed by the `(<anchor-name>).  Lines 13-15 of this RMarkdown file are examples.
+
+```{r}
+z <- 3
+z <- z * 17
+print(z)
+```
+
+**Exercise 2.4:** Create a new RMarkdown file using the `File > New File > R Notebook` menu option.  RStudio provides you with a basic template which you can modify as needed.  Add a meaningful title and your name as an author in the YAML header.  Render the file using the `Preview` option.
+
+
+## 3. Lab: Some Basic R practice {#WS3}
+
+### 3.1 A simple variable assignment example
+
+In the previous task you may well have largely relied on the provided R code. Now we move onto learning about basic R syntax and some coding exercises for you to undertake.
+
+Suppose I’m trying to calculate how much money I’m going to make from my *Modern Data* book. There are several different things I will need to store:  
+ 
+- `sales`  how many copies I’ll sell `sales`  
+- `price`  the price per copy 
+- `numberStudents` number of students in the class (assume I sell one copy per student)
+- `recommend` the proportion of students so impressed that they recommend the book to friends and family
+- `income` the income generated
+
+Let's turn this into R.
+
+```{r}
+# Compute sales income for Martin's book
+
+price <- 10                                     # assume price is 10 UKP per book copy
+numberStudents <- 100                           # number of students in the class
+recommend <- 0.5                                # proportion of students who recommend the book
+
+sales <- numberStudents * (1 + recommend)
+income <- sales * price
+paste("Martin will earn:", income)              # display a readable string with the paste function
+```
+
+Although we could just output `income`, I have added some text to make the output of the code easier to interpret with the `paste()` function to combine a character string literal denoted by quotation marks and the calculated income.
+  
+
+**Exercise 3.1:** Change the number of students to 200 and the recommendation rate to 0.2.  What's my new estimated income?  
+  
+**Exercise 3.2:** Update the sales income R code to handle tax.  Assume that income is taxed at a flat rate of 20%.  Modify the above R code to output gross income and net (after tax) income.  Using RStudio you can edit this Week 1 Worksheet Notebook.  
+
+```{r}
+# Your extended code needs to go here 
+
+
+```
+
+HINT: I recommend you define a new numeric variable to store the tax rate and another for net income.  For clarity you might want to rename `income` to make it obvious that it stores gross income.
+
+**Bonus Exercise 3.3:** How would you answer the question: it's possible to write a much shorter R program without any extra variables, so why bother?
+
+It's very *important* to get into the habit of writing easy to follow R code.  For this reason I have added comments and tried to select meaningful variable names.
+
+
+### 3.2 Using vectors  
+
+Recall that at a Vector is a repeated group of the **same** data type, e.g., a vector of character strings.
+
+```{r}
+# Define a new vector
+greetings <- c("Hi!", "Hello", "Good morning", "Saludo", "Hej")
+greetings
+```
+
+We can also check the type of `greetings`
+
+```{r}
+# Check the type of greetings
+is.vector(greetings)
+```
+
+**Exercise 3.4:**  Check the type of the variable `price` (from Section 3.1).  What output do you expect?
+
+
+To fully exploit the power of vectors we can access subsets of elements.  To do this we use the square bracket notation `[<n>]` where $n$ is the position of the required vector element.  
+
+```{r}
+# Different ways to index vector elements
+greetings[2]        # Access the 
+
+n <- 3
+greetings[n]        # You can use a variable as an index 
+greetings[1:3]      # Or you can specify a range vector elements
+```
+
+Notice in the above R chunk, that we can access more than one element at a time by using the `:` operator to return a range of elements.  The range can be specified by literals as in `[1:3]` or integer^[If the index variables are not integers R will do its best to coerce the values to integers.] variables e.g., `[m:n]`. 
+
+
+### 3.3 Using data frames
+
+Data frames are amongst the most useful of the different data structures.  These are two dimensional and unlike 2-dimensional matrices can comprise different consituent data types.  
+
+Let's start by examining a built-in data set mt-cars that stores information about motor cars from the 1970s that is stored as a data frame.
+
+```{r}
+# Assign the built in data object mtcars to a new data frame df
+df <- mtcars
+
+# View the data frame in a new window in RStudio
+View(df)
+```
+
+**Exercise 3.5:** How many variables and observations does `df` have?  HINT: There are functions `nrow()` and `ncol()` if you can't be bothered to count.  
+
+
+You can use the `$` operator to specify a column/variable from a data frame, for instance:
+
+```{r}
+# Display the observations for cylinder numbers from df
+df$cyl
+
+# Apply the median function
+median(df$cyl)
+```
+
+**Exercise 3.6:** Using the `$` operator determine the mean and minimum mpg for cars in df.
+
+
+**Exercise 3.7:** Update the number of gears for the Mazda RX4 from 4 to 6.  HINT: `mt$gear` is a vector so you can use an index to reference a particular element.
+
+
+**Quiz:** Please check your understanding of this chapter via this [quick quiz](https://forms.gle/m6J1ka6LECvaDKGu5) (10 simple multiple choice questions with answers).
+
+
+## Appendix - extra notes on YAML {#YAML_appendix}
+
+YAML rhymes with camel!  It is an acronym for "**Y**AML **A**in't **M**arkup **L**anguage". 
+
+An R Markdown file has three components:
+
+1. Header or front matter written in YAML.
+2. Markdown: this is text to describe your R analysis  
+3. Code chunks: Chunks of embedded R code that can be executed and rendered 
+
+An RMarkdown file *must* start with a header written using YAML syntax.  There are four default elements in the RStudio YAML header:
+
+    title: The title of your document. NB this is not the same as the file name.
+    author: Who wrote the document.
+    date: By default this is the date that the file is created.
+    output: What format will the output be in.  We will generally use html.  Other options are pdf, various slide formats, etc.
+
+YAML is delineated by `---` and `---`.  
+
