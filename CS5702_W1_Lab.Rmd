@@ -257,6 +257,27 @@ median(df$cyl)
 **Exercise 3.7:** Update the number of gears for the Mazda RX4 from 4 to 6.  HINT: `mt$gear` is a vector so you can use an index to reference a particular element.
 
 
+So we can use the dollar operator to identify columns/variables.  What about rows/observations?  There are several ways to achieve this.  Using indices via the `[ ]` notation notice that since a data frame has two dimensions two arguments are needed, but since we want the entire row we can leave the argument after the comma blank.
+
+```{r}
+# To retrieve the 2nd row we could have.
+df[2,]
+```
+
+**Exercise 3.8:** Modify the above code to retrieve columns 1-3.  HINT: remember the `:` operators from when we were manipulating vectors.  
+
+
+The other way to retrieve specific observations is when the rows have names e.g., "Mazda RX4", as in this case.
+
+```{r}
+# Retrieve the observation named "Valaiant"
+df["Valiant",]
+```
+
+
+**Exercise 3.9:** Change the number of cylinders for the Valiant to 12.  
+
+
 **Quiz:** Please check your understanding of this chapter via this [quick quiz](https://forms.gle/m6J1ka6LECvaDKGu5) (10 simple multiple choice questions with answers).
 
 
