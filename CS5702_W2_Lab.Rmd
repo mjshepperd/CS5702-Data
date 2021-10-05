@@ -1,0 +1,356 @@
+---
+title: "CS5702 W1 Worksheet Notebook"
+output: html_notebook
+date: 27/09/2021
+author: Martin Shepperd
+---
+
+#Week 2 Worksheet 
+
+???
+
+# 0. Worksheet Topics
+
+1. [Seminar: Analysing your questionnaire](#WS1)  
+2. [Lab: Some More R practice](#WS2)  
+
+# 1. Analysing the Joining Questionnaire{#S2}
+
+For this example we will take an *exploratory* approach (for more on EDA see Chapter 4 of the Modern Data Book).
+
+
+## 1.1 Questionnaire overview
+
+You were asked to complete this short, anonymous questionnaire and to critically reflect on the questions. 
+
+This questionnaire has been created using Google Forms and the link is [https://forms.gle/ZzRAfZvQxwSgVxM28](https://forms.gle/ZzRAfZvQxwSgVxM28).  
+
+I used Google Forms for (i) simplicity, (ii) it's free and (iii) you can easily export the results as a csv file.  We can then import this into R and do the analysis.
+
+**Exercise 1.1:**  Why bother to write R code at all, surely it will be easier to just use a spreadsheet?
+  
+  
+
+## 1.2 Questionnaire Design  
+
+**Exercise 1.2:**  What are the key design decisions?  
+
+**Exercise 1.3:**  What possible ethical issues might arise? 
+
+**Exercise 1.4:**  How could the questionnaire be improved? 
+
+
+
+## 1.3 A short story with a moral
+
+For the Home Country question (Q4) I wanted a pull down menu so the should be constrained (e.g., to avoid UK, United Kingdom, GB, England, etc).  But there are many countries and it feels like this would be a boring and error-prone task to manually copy and paste each country name into Google Forms.  
+
+I used [StackExchange](https://webapps.stackexchange.com/questions/76189/how-to-create-a-countries-drop-down-list-question-without-entering-all-countrie) because I reasoned (i) many other people must want to get a country response and (ii) will use a drop-down list.  
+
+The moral is, for almost every task, someone will have solved it before you so it's worth a quick google before you implement something from scratch.  
+
+
+### 1.4 Fetch and clean the data
+
+For simplicity the csv file name is pointed at a recent version I extracted from Google forms and stored on GitHub.  Let's start by fetching the data from GitHub.  
+
+First we must fetch the raw data using a convenient built in function called `read.csv()` that imports the data into an R data frame.  The options indicate the file has headers which can be used as variable names.
+
+
+```{r}
+# Fetch the raw data CS5702JoiningSurvey_2021.csv from GitHub.
+# Read the csv file into a new data frame called surveyDF
+surveyFileName <- "https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/CS5702JoiningSurvey_2021.csv"
+surveyDF <- read.csv(surveyFileName, header = TRUE, stringsAsFactors = FALSE)
+```
+
+
+A simple starting point is to *"eyeball"* the imported data.  If you look in the Environment Pane in RStudio you can see a little table icon by the data frame surveyDF.  (Alternatively you could run the R function `View()` directly.)  As a starting point we should check to see if the values appear 'sensible'.
+
+```{r}
+# Get a 'spreadsheet' type view of our data.
+View(surveyDF)
+```
+
+
+Looking at the data frame surveyDF we can see Google has used the questions as column headers which have then been interpreted as variable names in the data frame.  Unfortunately this means they're rather clunky so let's clean this up.  
+
+```{r}
+# Clean up surveyDF column names
+
+names(surveyDF)  # The names() function returns all the dataframe column names
+
+# Choose shorter, clearer names
+names(surveyDF)[3] <- "MSc"
+names(surveyDF)[4] <- "StudyMode"
+names(surveyDF)[5] <- "Background"
+names(surveyDF)[6] <- "Country"
+names(surveyDF)[7] <- "Motivation"
+names(surveyDF)[8] <- "StatsKnowl"
+names(surveyDF)[9] <- "ProgKnowl"
+names(surveyDF)[10] <- "ProgLangs"
+names(surveyDF)[11] <- "Excite"
+names(surveyDF)[12] <- "Concern"
+```
+
+Remove column X as this is redundant
+
+```{r}
+# Drop X using set difference with '-' operator
+surveyDF = subset(surveyDF, select = -c(X))
+```
+
+
+
+We also note some values (as well as the variable names which we've already dealt with) are extremely long and a bit clunky.  We can replace them with something a little more succinct.  
+
+```{r}
+# Shorten the MSc titles (for convenience)
+surveyDF[surveyDF=="MSc Artificial Intelligence (AI)"] <- "AI"
+surveyDF[surveyDF=="MSc Data Science Analytics (DSA)"] <- "DSA"
+```
+
+
+**Exercise 1.5:** Adapt the above code, or write your own, to simplify the values (known as Levels in R) for Motivation.  
+
+
+### 1.5 Data frame structure and data quality checking
+
+
+**Exercise 1.6:** Make a list of things we should check for when trying to assure the quality of our survey data.
+
+
+One common problem is **missing** data is frequently a problem for data analysis.  It is so important we will revisit the topic in detail in Week 5 on Data Cleaning.  In R missing observations should be denoted `na`.  Note that this is different to `NaN` (or Not a Number) which refers to the result of a computation e.g., `sqrt(-1)`.  Try it!  
+
+Whilst it might seem a technicality the importing function read.csv() treats an empty string "" as such, i.e., it's still a value since the survey respondent has chosen not to enter any reply as opposed to they never saw the question.  Remember the questionnaire permits no answer as an answer as well as text!  
+
+```{r}
+# A *very* simple way to check for missing observations in our data frame
+# using the is.na() function
+
+is.na(surveyDF)
+
+# We can also count as the above produces a large table is hard to read 
+sum(is.na(surveyDF))
+```
+
+The `is.na()` function returns True or False depending on whether the observation is present or not.  In our case there are no missing values so we only see FALSE results, and the count is zero.
+
+Note that almost always when we want to refer to a specific variable **in** a data frame we use the `$` notation e.g., `<data frame name>$<column name>`.
+
+It is particularly important to think about what data types of the different variables in our data frame.  One quite easy way to look at the entire data frame is to use the `str()` function.  (str is short for structure obvs!)
+
+```{r}
+# Examine the data frame structure
+str(surveyDF)
+```
+
+Some of the variables are going to be used as categories e.g., `MSc` and `StudyMode`; we might want to compare FT and PT responses, etc.  This is much easier if we make the categorical variable a **Factor**.  These are categorical variables generally with relatively few distinct values or **Levels**.
+
+
+```{r}
+# Changing MSc from a character type to a Factor
+surveyDF$MSc <- as.factor(surveyDF$MSc)
+```
+
+
+### 1.6 Some summary statistics
+
+It's usually a good idea to start with some basic summary (descriptive) statistics to give a basic feel for the data.  
+
+```{r}
+# Using the summary() function on the numeric variables
+summary(surveyDF$StatsKnowl)
+summary(surveyDF$ProgKnowl)
+
+# And easier to visualise
+# I superimpose the a probability density plot over the histogram
+
+hist(surveyDF$StatsKnowl, 
+     main="Histogram of Perceived Statistical Knowledge", 
+     xlab="Score (1 = low, 10 = high)", 
+     col="darkgray",
+     xlim=c(1,10),
+     breaks=1:10,
+     prob = TRUE
+     )
+lines(density(surveyDF$StatsKnowl), col = "red")  
+
+hist(surveyDF$ProgKnowl, 
+     main="Histogram of Perceived Programming Knowledge", 
+     xlab="Score (1 = low, 10 = high)", 
+     col="darkgray",
+     xlim=c(1,10),
+     breaks=1:10,
+     prob = TRUE
+     )
+lines(density(surveyDF$ProgKnowl), col = "red")  
+# Alternatively we can use boxplots
+boxplot(surveyDF$StatsKnowl, surveyDF$ProgKnowl, 
+        xlab = "Stats knowledge / Programming knowledge")
+```
+NB The above plots are generated using Base R.  In subsequent weeks we will move to {ggplot} which is far more powerful, but also a little more complex.  
+
+For the character string variables we can use the `table()` function to produce frequency counts of categories.  This makes no sense when we deal with longer text (since each input will almost certainly be unique in phrasing if not in sentiment).  Similarly the `ProgLangs` variable is problematic because it is multi-valued i.e., it may contain zero or more programming languages.  This is a challenge we will return to in Week 5 on Data Cleaning.
+
+```{r}
+# Use the table() function to produce some tables of frequency counts
+table(surveyDF$MSc)
+table(surveyDF$StudyMode)
+# A 2x2 contingency table of MSc by Study Mode
+table(surveyDF$MSc,surveyDF$StudyMode)
+```
+
+
+### Multivariate analysis
+
+Here we start exploring the relation ships between more than one variable.
+
+**Extension exercise 1.7:** Is there any relationship between `Background` [UG course] and choice of MSc?
+
+```{r}
+# This is an example of a 2-d table of frequencies.
+table(surveyDF$Background, surveyDF$MSc)
+
+# and if we want marginal totals wrap table() with the addmargins() function
+addmargins(table(surveyDF$Background, surveyDF$MSc)) 
+
+# and if you want proportions then wrap with prop.table()
+prop.table(table(surveyDF$Background, surveyDF$MSc))
+```
+
+**Exercise 1.8:** Do AI and DSA students have different perceived levels of statistical and programming understanding?
+
+To answer this question having turned `MSc` into a **factor** is now useful.  In R a factor has a special meaning, i.e., a character variable which takes on a limited number of different values (these are often referred to as categorical variables) e.g., StudyMode and MSc, whilst Concern would be a problematic choice because the text content is essentially unbounded.  To make this change of type we use the `as.factor()` function.
+
+A common way to visualise the distribution of values for a variable is a **boxplot**.  Boxplots can be used to compare distributions graphically based on five pieces of information, the minimum, Q1, Q2, Q3 and the maximum (they were proposed by the statistician John Tukey, see [wikipedia](https://en.wikipedia.org/wiki/Box_plot)).
+
+In R we can use the boxplot() function to produce boxplots.  Where we want to separate and compare the data by category e.g., MSc we can use a factor.  We tell R how to do this by using a tilde:
+
+`<variable_name> ~ <factor_name>`
+
+for instance, `surveyDF$StatsKnowl ~ surveyDF$MSc` which then forms the argument we pass to the `boxplot()` function in parentheses (see below).
+
+```{r}
+# Compare the different distributions of values using a boxplot for each value of the factor MSc.
+# Since there are 2 courses (AI and DSA) this produces 2 boxplots of StatsKnowl and we can see
+# if there are any differences
+boxplot(surveyDF$StatsKnowl ~ surveyDF$MSc, 
+        notch = TRUE,            # Shows the 95% confidence intervals
+        horizontal = TRUE,
+        xlab = "Statistical understanding",
+        ylab = "")
+
+# Side by side boxplots of ProgKnowl separated by the factor MSc.
+boxplot(surveyDF$ProgKnowl ~ surveyDF$MSc,
+        notch = TRUE,            # Shows the 95% confidence intervals
+        horizontal = TRUE,
+        xlab = "Programming understanding",
+        ylab = "")
+```
+
+**Exercise 1.9:** Now we've generated the boxplots we need to consider whether there are any differences.  What do you think?  How large are the differences?  Do they matter?  Sometimes statisticians test whether the differences are important by means of Inferential Statistics and you will learn about these in CS5701 (Quantitative Data Analysis).
+
+ 
+### 1.7 Text analysis
+
+Some of the variables are free format text which can also be analysed in R.  This is a little more complex so at this juncture we will simply generate some word clouds.
+
+```{r}
+# To extract all the words into a single character string you need the 
+# paste() function with the collapse option.
+words <- paste(surveyDF$Excite, collapse = " ")
+
+# Display the words
+words
+
+# Save the words in a text file as input to a word cloud generator
+# You can change the file name
+# NB This will overwrite the previous contents (if any)
+fileName <- file("MyWords.txt")
+writeLines(words, fileName)
+close(fileName)
+```
+
+You can then copy and paste into a word cloud generator.  At a later stage we will do this programmatically but to keep things simple for now you can use my [word cloud generator](https://martin-shepperd.shinyapps.io/shinywordcloud/) which is written using R and shiny.  
+
+**Exercise 1.10:** What are the dominant themes for (i) `Excite` and (ii) `Concern`?  Does the word cloud also find unimportant words?  What about similar words but with different endings e.g., singular and plural?
+
+
+## 2. Lab: Some More R practice{#WS2}  
+
+
+### 2.1 Recap Vectors
+
+```{r}
+# This R code generates random height data using the function rnorm()
+# and assigns it to the numeric vector height
+set.seed(42)                                                # Set the random number generator seed
+                                                            # so your results are repeatable.
+height <- round(rnorm(n = 20, mean = 1.65, sd = 0.15), 3)   # The results are rounded for readability
+```
+
+**Exercise 2.1:** What is the value of 18th observation of `height`?  
+
+
+**Exercise 2.2:** Generate a new vector `weight` that is the same length, contains random values with a mean of 65 and a sd=10.  Then compute a new vector called `BMI`.  HINT $$BMI = \frac{weight}{height^2}$$.  SECOND HINT you can apply operations to vectors e.g., 
+
+```{r}
+# Example vector operation
+height2 <- height * 2
+```
+
+
+### 2.2 More data frames  
+
+A very useful feature of R is the ability to combine columns (vectors) to make data frames.  This is accomplished with the `cbind()` function.  
+```{r}
+# Make a new data frame from the vectors height and weight.  
+# NB They must be the same length!
+newDF <- as.data.frame(cbind(height,weight))
+```
+
+**Exercise 2.3:** Add `bmi` as a third column to the dataframe `newDF`.  
+
+
+There is also an analogous row binding function `rbind()` which can be used to add extra rows.  We make a new row using the combine function `c()`.
+
+```{r}
+# Create a 21st row ready to add to newDF
+newRow <- c(10, 20, 30)
+```
+
+**Exercise 2.4:** Add `newRow` to the end of  dataframe `newDF`.  
+
+
+
+### 2.3 Using files in R {#C2_Files}
+
+Very often, the data we need to analyse is stored in external files.  So the ability of R to access files is very important.  Fortunately R provides a number of very convenient ways to import data.  One of the simplest is from a comma-separated variable (CSV) file.  This is also very flexible since a very common way that data is stored is in Excel spreadsheets. Users can save their spreadsheets in comma-separated values files (CSV) and then use R’s built in functionality to read and manipulate the data.
+
+```{r}
+# R code to read a remote file (on GitHub) into a data frame pubsDataFrame
+# Because the path url is quite long I've first copied it to a character string fname
+# to improve readability
+
+fname <- "https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/pubs.csv"
+pubsDataFrame <- read.csv(fname, header = TRUE, stringsAsFactors = FALSE)
+
+head(pubsDataFrame)
+```
+
+
+In the above R code note that we use the function `read.csv()`; it has several arguments. The first argument is the path name to the csv file we wish to import.  In this example we have nested another function `file.choose()` which will prompt the user to select the relevant file.  Sometimes this can be very flexible.  Next, typically the first row of a spreadsheet contains column descriptions so this can form a good basis for naming each column in R.  Lastly, we have the argument `stringsAsFactors = FALSE`.  This is something of a technicality but the default behaviour is to convert string character variables into factors (i.e., categories such as female and male) which isn't generally the desired behaviour.
+
+**Exercise 2.5:** Read in a local csv file into a new data frame.  If you don't have any suitable file you can create a file using Excel and populate it with some dummy data.  HINT There are two useful functions `getwd()` and `setwd()` to manage your working directory or alternatively you can set it via RStudio and the Session > Set Working Directory menu option.  
+
+
+So far we have reviewed some methods for importing data into R from external files, but there are occasions when we’ll want to go the other way, i.e., exporting data from R so that the data can be archived or used by external applications. 
+
+Analogous to the `read.csv()` function is the `write.csv()` which outputs an R object to a delimited text file.
+
+
+**Exercise 2.6:** Write a data frame to a local csv file.  Check you can view it with either a text editor or Excel.  If you need help using this function, type the function name into the Help Tab of the bottom right pane in RStudio.  
+
+
+**Extension Exercise 2.7:** Read the [database section](https://bookdown.org/martin_shepperd/ModernDataBook/C2_DataBases.html) of the Modern Data book to get an overview of manipulating more complex files e.g., databases in R.  
