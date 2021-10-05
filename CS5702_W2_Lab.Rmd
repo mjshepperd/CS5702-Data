@@ -1,13 +1,12 @@
 ---
 title: "CS5702 W1 Worksheet Notebook"
 output: html_notebook
-date: 27/09/2021
+date: 28/09/2021
 author: Martin Shepperd
 ---
 
 #Week 2 Worksheet 
 
-???
 
 # 0. Worksheet Topics
 
