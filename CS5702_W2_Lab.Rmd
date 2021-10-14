@@ -1,9 +1,9 @@
 ---
 title: "CS5702 W2 Worksheet Notebook"
 output:
-  html_document: default
   pdf_document: default
-date: 10/10/2021
+  html_document: default
+date: 14/10/2021
 author: Martin Shepperd
 ---
 
@@ -303,15 +303,23 @@ Some of the variables are free format text which can also be analysed in R.  Thi
 # paste() function with the collapse option.
 words <- paste(surveyDF$Excite, collapse = " ")
 
-# Display the words
-words
+# A little more cleaning
+
+# Split words from string into vector (one word per element)
+words <- strsplit(words, "\\s+")[[1]]    
+# Remove any punctuation - gsub uses a pattern and :punct: is built in
+words <- gsub("[[:punct:]]","",words)
+
+# Display the first six words to check ok
+head(words)
 
 # Save the words in a text file as input to a word cloud generator
 # You can change the file name
 # NB This will overwrite the previous contents (if any)
-fileName <- file("MyWords.txt")
+fileName <- file("MyWords2.txt")
 writeLines(words, fileName)
 close(fileName)
+
 ```
 
 You can then copy and paste into a word cloud generator.  At a later stage we will do this programmatically but to keep things simple for now you can use my [word cloud generator](https://martin-shepperd.shinyapps.io/shinywordcloud/) which is written using R and shiny.  
