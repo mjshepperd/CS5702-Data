@@ -1,38 +1,187 @@
 ---
 # This is the YAML header
-title: "CS5702 W3 Lab Notebook"
-output: html_notebook
+title: "CS5702 Week3 Lab Notebook"
+output:
+  html_document: default
+  pdf_document: default
 author: Martin Shepperd
-date: 20/10/2020
+date: 15/10/2021
 ---
 
-NB Updated (20/10/2020) to contain second simpler solution to the user-defined function `notNegative()`.  
+# Week 3 Worksheet 
+
+Be aware that because this Worksheet contains some intentional (and hopefully no unintentional) coding errors you can't Knit it to html or pdf until these are fixed.  However, you can still save it as an RMD file in the usual way.  
 
 ## Worksheet Contents
 
-1. [Debugging and getting help](#W3S1)  
-2. [User defined functions](#W3S2)    
-3. [Exercise answers](#W3A) 
+0. [Worksheet: Introduction](#W3S0)
+1. [Seminar: Visualising covid-19 data trends](#W3S1)
+2. [Lab: Debugging and getting help](#W3S2)  
+3. [Lab: User defined functions](#W3S3)    
+4. [Exercise answers](#W3A) 
 
-##0. Worksheet Introduction
+##0. Worksheet Introduction {#W3S0}  
 
 <span style="color: darkorange;">**Pre-requisites**</span>
 
 You should:  
 
-1. have studied the Week 2 seminar+lab worksheet 
+1. have worked through the Week 2 Worksheet 
 2. be familiar (listened to/read) the Week 3 Lecture "Engineering or Hacking"
 3. be able to write, edit, save and re-open your own RMarkdown files  
-4. be able to load external files into a data frame
+4. be able to load external files (of various formats such as csv) into a data frame
 
 This lab worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
 
-Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
+Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser or you could `knit` it to pdf if you prefer.  You may find these easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes.  Remember you
 
 Remember, you are encouraged to explore and experiment.  Change something and see what happens!
 
+### 0.1 Packages and libraries
 
-## 1. Debugging and getting help {#W3S1}
+Up until now we have mainly dealt with Base R, principally for reasons of simplicity.  This is often a sufficient set of functions to perform straightforward data and statistical analysis.  However, this is a rich world of **additional** functions that are freely available.  
+
+We can **extend** Base R by means of <span style="color: darkorange;">**packages</span> (collections of extra functions and data sets) developed by the R community and validated by [CRAN](https://cran.r-project.org/), which hosts most packages.  Presently there are about 18,000 extra packages covering everything from graphics to machine learning.  
+
+In order to install a new package you need to fetch it from CRAN and copy onto a local storage device as part of your R library e.g., your hard disk.  You do this **ONCE**.  Thereafter, if you need to use it you must copy it into memory each R session.
+
+```{r}
+# Install a library
+# Only do this once!
+# Uncomment the next statement if you wish to execute it.
+
+# install.packages("tidyverse")
+
+# To load a package into memory for a new R session
+library(tidyverse)
+
+# To check what packages you already have in your library
+installed.packages()
+```
+
+On rare occasions a package may be on GitHUb rather than CRAN in which case you need the package {devtools} which is on CRAN(!) and then use the function `install_github("joachim-gassen/tidycovid19")` which gives the Git repo name `joachim-gassen` and the package name `tidycovid19`.
+
+There can sometimes be complex dependencies between packages and so installing one package may lead to others being installed.  Similarly, when you load from your R library.
+
+
+
+## 1. Seminar - Visualising covid-19 data trends {#W3S1}
+
+This example shows how we can fetch and visualise covid-19 data from Johns Hopkins University via GitHub.
+
+### 1.1 Initialisation
+
+We need some packages over and above base R.  Since we may not be sure whether they are already installed we test for their presence.  Most packages come from CRAN and are easy to install using `install.packages()` but the package `{tidycovid19}` is on GitHub (joachim-gassen) so we also need `{devtools}` in order to install packages that aren't on CRAN.
+
+This R code may appear daunting but don't worry.  We will revisit it in detail in Week 3.  For the time being see it as a way to install and load necessary extra functionality beyond Base R.
+
+```{r messages=F}
+# If a package is installed, it will be loaded and missing package(s) will be installed 
+# from CRAN and then loaded.
+
+# The packages we need are:
+ 
+packages = c("tidyverse", "devtools")
+
+# Load the package or install and load it
+package.check <- lapply(
+  packages,
+  FUN = function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, dependencies = TRUE)
+      library(x, character.only = TRUE)
+    }
+  }
+)
+
+# The package tidycovid isn't on CRAN so we need to install from GitHub
+# To do this you need 
+install_github("joachim-gassen/tidycovid19")
+library(tidycovid19)
+```
+
+Download the data (cached on GitHub rather than directly from the Johns Hopkins University).  This is live data updated within the last 24 hours.  
+
+```{r}
+#Download the data into a data frame called cv.df using the 
+#download_jhu_csse_covid19_data() function from the {tidycovid19} package.
+#
+cv.df <- download_jhu_csse_covid19_data(cached = TRUE)
+```
+
+**Exercise 1.1:** The dataframe which comprises all international covid-19 data recorded by Johns Hopkins since January 22, 2020 has ~120,000 observations (see the Environment Pane).  Is this large?  How much larger can R handle?
+
+### 1.2 Explore the data
+
+Let's focus on the UK  and then "eyeball" the data again.
+
+```{r}
+# select only the UK data
+cv.uk.df <- subset(cv.df, iso3c=="GBR")
+
+head(cv.uk.df)
+tail(cv.uk.df)
+```
+
+### 1.3 Show trends
+
+(i) Mortality rate
+
+```{r messages=F}
+# Compute new deaths as the data shows cumulative deaths
+cv.uk.df$new.d[2:nrow(cv.uk.df)] <- tail(cv.uk.df$deaths, -1) - head(cv.uk.df$deaths, -1)
+cv.uk.df$new.d[1] <- 0     # Add zero for first row 
+
+# Compute new infections
+cv.uk.df$new.i[2:nrow(cv.uk.df)] <- tail(cv.uk.df$confirmed, -1) - head(cv.uk.df$confirmed, -1)
+cv.uk.df$new.i[1] <- 0     # Add zero for first row 
+```
+
+We can produce a plot of daily additional deaths using the {ggplot} package which is an extremely powerful and flexible set of functions for producing extremely high quality graphics e.g. NYT, Guardian and the BBC.  We also save the plots using the `ggsave()` function which is also part of the {ggplot} package.
+
+```{r}
+# NB a small span value (<1) makes the loess smoother more wiggly!
+ggplot(data = cv.uk.df, aes(x = date, y = new.d)) +
+  geom_line(color = "skyblue", size = 0.6) +
+  ylim(0,1200) +
+  stat_smooth(color = "darkorange", fill = "darkorange", method = "loess", span = 0.2) +
+  ggtitle("Daily additional deaths in the UK due to covid-19") +
+  xlab("Date") + ylab("Daily new deaths")
+ggsave("cv19_UK_deathrate.png")
+```
+
+(ii) Infection rate
+
+Note that we use a log scale for the y-axis ie daily new infection rate.
+
+**Exercise 1.2:** Why did I choose to use a log scale for daily new infection rate?
+
+```{r}
+ggplot(data = cv.uk.df, aes(x = date, y = new.i)) +
+  geom_line(color = "skyblue", size = 0.6) +
+  scale_y_continuous(trans = "log10") +
+  stat_smooth(color = "darkorange", fill = "darkorange", method = "loess") +
+  ggtitle("Daily new infections in the UK from covid-19") +
+  xlab("Date") + ylab("Daily new infections") 
+ggsave("cv19_UK_infectionrate.png")
+```
+
+To better visualise the trends (i.e., over time) we use the **loess** (locally estimated scatterplot smoothing) smoother.  It is designed to detect trends in the presence of noisy data when the shape of the trend is unknown thus it is a robust (non-parametric) method.  
+
+**Exercise 1.3:** If you look carefully at the data there is a clear cycle within the overall trend.  What is it and why?  How should we deal with it?
+
+**Exercise 1.4:** What does the light orange shaded region around the smoothed trend line mean?  Why does it vary in breadth?
+
+**Exercise 1.5:** What was the greatest number of new infections in one day in the UK?  HINT there is a built in function `max()` and the you will need to examine the vector `new.i` which is part of the `cv.uk.df` dataframe so you will need the `$` operator.  
+
+**Extension Exercise 1.6:** Edit the R code to produce a similar trend analysis for another country of your choice.  Note that the data set uses 3 character country codes e.g., SWE, USA see [wikipedia](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3) for a complete list.  HINT: you will need to change the subset command and perhaps save to a new dataframe and then make sure you turn the cummulative counts into new counts.
+
+**Exercise 1.7:** Is `new.i` in the cv.uk.df dataframe an integer?  
+
+**Exercise 1.8:** How many people recovered in the UK on the 236th day of data collection.  Write an R statement to answer.  
+
+
+## 2. Lab - Debugging and getting help {W3S2}
 
 1. find/read the relevant [cheatsheet](https://rstudio.com/resources/cheatsheets/)  
 2. perspiration e.g., see this [five step approach](https://medium.com/learn-love-code/stuck-on-a-coding-problem-here-are-5-steps-to-solve-it-8be04c4b4f19)
@@ -43,7 +192,7 @@ Remember, you are encouraged to explore and experiment.  Change something and se
 
 For *more* suggestions visit the subsection 0.2 ["vi) Learn how to get help"](https://bookdown.org/martin_shepperd/ModernDataBook/W0-Prep.html#Help) in the Modern Data book.  
 
-**Exercise 3.1:** The following R code chunk contains a bug such that the R interpreter can't parse it.  What's wrong?  Can you fix it?
+**Exercise 2.1:** The following R code chunk contains a bug such that the R interpreter can't parse it.  What's wrong?  Can you fix it?
 
 ```{r}
 # This code chunk contains an error
@@ -52,7 +201,7 @@ var2 <- 6
 var3 <- (var1 * var2)/(varI * 100)
 ```
 
-**Exercise 3.2:** This R chunk has a logic error.  Can you detect it and then make the necessary correction?  It might help to look at the values of the variables in the Environment Pane.
+**Exercise 2.2:** This R chunk has a logic error.  Can you detect it and then make the necessary correction?  It might help to look at the values of the variables in the Environment Pane.
 
 ```{r}
 # This code chunk contains an error
@@ -63,7 +212,7 @@ if(var6 < var4) print("var6 is larger than var4")
 if(var6 > var4) print("var6 is smaller than var4")
 ```
 
-**Exercise 3.3:** The following R code chunk contains a bug such that yet again the R interpreter can't parse it.  What's wrong?  Can you fix it?
+**Exercise 2.3:** The following R code chunk contains a bug such that yet again the R interpreter can't parse it.  What's wrong?  Can you fix it?
 
 ```{r}
 # Here we are trying to create a numeric vector using
@@ -71,7 +220,7 @@ if(var6 > var4) print("var6 is smaller than var4")
 Vector1 <- c(3, 2, O, 2, 2, 6)
 ```
 
-**Exercise 3.4:** The following R code chunk contains a bug such that yet again the R interpreter can't parse it.  What's wrong?  Can you fix it?
+**Exercise 2.4:** The following R code chunk contains a bug such that yet again the R interpreter can't parse it.  What's wrong?  Can you fix it?
 
 ```{r}
 x <- "1"
@@ -81,13 +230,28 @@ sum(Vector2)
 ```
 
 
-# 2. User defined functions {#W3S2} 
+## 3. User defined functions {#W3S3} 
 
 > One of the best ways to improve your reach as a data scientist is to write functions. Functions allow you to automate common tasks in a more powerful and general way than copy-and-pasting.  
 > --- Grolemund and Wickham (2018) 
 
+User-defined function *benefits*:  
 
-**Define** a function called *halve* by declaring it.  Afterwards you can see it as a new R object in the Environment Pane.
+- abstract (hide) details to help understandability e.g., `checkInput()`   
+- place related code in one place    
+- reuse  
+- maintainability i.e., only need to make changes in *one* place  
+
+
+Parts of a function:  
+
+1. **Function Name**: how we call the function e.g., `head()`.
+2. **Argument(s)**: when a function is called, we pass values to match the (0+) arguments
+3. **Function Body**: contains a set of statements that defines what the function does.  (For in-built functions these are hidden but for user defined-functions we need to provide them.)  
+4. **Return Value**: the result after being called  
+
+
+We can DEFINE a function called *halve* by declaring it.  Afterwards you can see it as a new R object in the Environment Pane.
 
 ```{r}
 halve <- function(n)
@@ -98,39 +262,61 @@ halve <- function(n)
 }
 ```
 
-**Use** the function by calling it *after* it has been successfully declared.
+We USE the function by calling it *after* it has been successfully declared.
 
 ``` {r}
 halve(-8.3)
 ```
 
-**Exercise 3.5:** Create a new function named `third()` that returns a third of its input argument n.  Check it works by testing it with various input values, e.g., `third(7)`.
+**Exercise 3.1:** Create a new function named `third()` that returns a third of its input argument n.  Check it works by testing it with various input values, e.g., `third(7)`.
 
 
-**Exercise 3.6:** Generalise the function to `fraction()` so that it now has two arguments where the first is the numerator and the second is the denominator.  Declare the function and again test it with different input values, e.g., `fraction(7, 10)`.
+**Exercise 3.2:** Generalise the function to `fraction()` so that it now has two arguments where the first is the numerator and the second is the denominator.  Declare the function and again test it with different input values, e.g., `fraction(7, 10)`.
 
 
-**Exercise 3.7:** Write a new function `notNegative()` that takes a number as an argument and return TRUE if it's zero or more (i.e., not negative) and FALSE otherwise.  You will need an `if` statement that tests if a condition is true or not, e.g., `if (x<y) print("True") else print("True")`.  For more details use the help e.g., enter "if' into the search box of the Help Pane in RStudio.
+**Exercise 3.3:** Write a new function `notNegative()` that takes a number as an argument and return TRUE if it's zero or more (i.e., not negative) and FALSE otherwise.  You will need an `if` statement that tests if a condition is true or not, e.g., `if (x<y) print("True") else print("True")`.  For more details use the help e.g., enter "if' into the search box of the Help Pane in RStudio.
 
 
-**Extension exercise 3.8:** What happens to your function if you give a value that's not numeric e.g., a character?  How might you protect your function against this eventuality?  This is sometimes known as defensive programming.  HINT: There's a built-in function `is.numeric()`. You can discover more about it using the help, e.g., type `?is.numeric`.
+**Extension exercise 3.4:** What happens to your function if you give a value that's not numeric e.g., a character?  How might you protect your function against this eventuality?  This is sometimes known as defensive programming.  HINT: There's a built-in function `is.numeric()`. You can discover more about it using the help, e.g., type `?is.numeric`.
 
 
-## 3. Exercise answers{#W3A}
+## 4. Exercise Answers{#W3A}
+
+1.1: Although ~120K observations might seem large, in reality this only occopies 2.6Mb which is <0.1% of the capacity of R on a fairly standard laptop or PC.
+
+1.2: Given the wide range of values for daily infections a log10 scale makes the plot easier to view, particularly for the smaller values. 
+
+1.3: There is a clear weekly cycle (or we can say the periodicity is 7-days).  This is true of many countries.  Why do you think this might be?  
+
+1.4: This shows the 95% confidence limit since there is an element of uncertainty as to exactly where the trend line should be.  The broader the confidence limit band (shaded pale orange) the less confident we are about the exact location of the trend.  Where the confidence limit potentially goes negative (which would be meaningless) we do not plot it.  This principally occurs for the daily new death rate trend since many values are (mercifully) close to zero.  
+
+1.5: `max(cv.uk.df$new.i)`  
+
+1.6: Good luck!  
+
+1.7: `new.i` is not an integer?  One way to find out is to use the built in function `is.integer()`.
+```{r}
+is.integer(cv.uk.df$new.i)
+```
+
+If you wanted `new.i` to be an integer you could need to code something like
+```{r}
+cv.uk.df$new.i <- as.integer(cv.uk.df$new.i)
+```
+or make an assignment like `cv.uk.df$new.i <- 10L` where L is short for Long which is a long story!  
+
+1.8: `cv.uk.df$recovered[236]`  Remember you need to use the $ operator to reference a particular vector (variable) in the dataframe cv.uk.df.
 
 
-![Answers?](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Answers.png)  
+2.1: Although superficially the code looks ok, `var1` has been mistyped as `varI` on line 49.  Variable names need to be exact including the same case.
 
+2.2: The logical problem lies in the two if statements.  The relational operators (< and >) are the wrong way round, i.e., they're not consistent with the message from `print()`.  Making errors with `if` conditions is all too easy.  Be on the look out for this type of mistake.  
 
-3.1: Although superficially the code looks ok `var1` has been mistyped as `varI` on line 49.  Variable names need to be exact including the same case.
+2.3: As per 3.1 superficially the code looks ok but if you inspect the arguments to c() carefully you will see that insetad of a zero (0) an upper case O has been typed.  A hint is the editor has coloured it black rather than blue which RSTudio uses for numeric literals, black indicates it may be a variable name.  Since it's not in quotes R assumes it's the name of an object (variable) called `O` and since this has been declared it doesn't know what to do and gives up.  A solution is to replace `O` with 0.
 
-3.2: The logical problem lies in the two if statements.  The relational operators (< and >) are the wrong way round, i.e., they're not consistent with the message from `print()`.  Making errors with `if` conditions is all too easy.  Be on the look out for this type of mistake.  
+2.4: The problem is to do with type.  If you look carefully you can see that x is a character type because the number assigned to it is in quotation marks.  Therefore when we combine it with the numeric vector Vector2 this **coerces** the type to a character vector.  Remember every element of a vector must be the same type.  One the type has changed from numeric to character it's no longer meaningful to apply the arithmetic function `sum()` to it.
 
-3.3: As per 3.1 superficially the code looks ok but if you inspect the arguments to c() carefully you will see that insetad of a zero (0) an upper case O has been typed.  A hint is the editor has coloured it black rather than blue which RSTudio uses for numeric literals, black indicates it may be a variable name.  Since it's not in quotes R assumes it's the name of an object (variable) called `O` and since this has been declared it doesn't know what to do and gives up.  A solution is to replace `O` with 0.
-
-3.4: The problem is to do with type.  If you look carefully you can see that x is a character type because the number assigned to it is in quotation marks.  Therefore when we combine it with the numeric vector Vector2 this **coerces** the type to a character vector.  Remember every element of a vector must be the same type.  One the type has changed from numeric to character it's no longer meaningful to apply the arithmetic function `sum()` to it.
-
-3.5: This change should be straightforward.  Don't forget to edit the comment.  Obsolete and redundant comments are extremely harmful to the goal of understandable code.  
+3.1: This change should be straightforward.  Don't forget to edit the comment.  Obsolete and redundant comments are extremely harmful to the goal of understandable code.  
 
 ```{r}
 third <- function(n)
@@ -141,7 +327,7 @@ third <- function(n)
 }
 ```
 
-3.6: Here is a possible solution.  Note that there are now two arguments to this function.  The comment also been added to explain the purpose of each argument particularly because `n` and `m` are quite gnomic. 
+3.2: Here is a possible solution.  Note that there are now two arguments to this function.  The comment also been added to explain the purpose of each argument particularly because `n` and `m` are quite gnomic. 
 
 ```{r}
 fraction <- function(n,m)
@@ -152,7 +338,7 @@ fraction <- function(n,m)
 }
 ```
 
-3.7: This function requires a logical test using an `if` statement. Again this function might seem trivial but it's good to add a comment to properly document it.  Remember the direction we're testing, i.e., *not* negative so zero or more should return TRUE.  When you test your function, e.g., `notNegative(-3)` remember to cover positive and negative cases and it's good practice to also consider the boundary case (which is zero).
+3.3: This function requires a logical test using an `if` statement. Again this function might seem trivial but it's good to add a comment to properly document it.  Remember the direction we're testing, i.e., *not* negative so zero or more should return TRUE.  When you test your function, e.g., `notNegative(-3)` remember to cover positive and negative cases and it's good practice to also consider the boundary case (which is zero).
 
 ```{r}
 notNegative <- function(n){
@@ -163,7 +349,7 @@ notNegative <- function(n){
 ```
 
 
-3.8: Good luck!  
+3.4: Good luck!  
 
 This version tests if the argument is numeric using the built-in function `is.numeric()`.
 
@@ -187,7 +373,7 @@ notNegative <- function(n)
   }
 ```
 
-A more elegant solution (thanks Hamad) removes the need for negation.
+A more elegant solution removes the need for negation.
 
 ```{r}
 notNegative <- function(n)
