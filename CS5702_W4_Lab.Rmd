@@ -1,20 +1,22 @@
 ---
 # This is the YAML header
-title: "CS5702 W4 Lab Notebook"
-output: html_notebook
+title: "CS5702 Week 4 Worksheet"
+output:
+  html_document: default
+  pdf_document: default
 author: Martin Shepperd
-date: 21/10/2020
+date: 22/10/2021
 ---
 
 
 ## Worksheet Contents
 
-1. [R Recap](#W4S1)  
-2. [Finding data](#W4S2)  
-3. [EDA Example](#W4S3)
+1. [EDA Example](#W4S1)
+2. [R Recap](#W4S2)  
+3. [Finding data](#W4S3)  
 4. [Exercise answers](#W4A) 
 
-##0. Worksheet Introduction
+## 0. Worksheet Introduction
 
 <span style="color: darkorange;">**Pre-requisites**</span>
 
@@ -22,63 +24,205 @@ You should:
 
 1. have studied the Week 3 seminar+lab worksheet  
 2. be familiar (listened to/read) the Week 4 Lecture "Exploratory Data Analysis and Visualisation"  
-3. be able to load external files into a data frame  
+3. be able to load external files into a data frame and then manipulate the data  
 4. be able to write and edit simple user-defined functions    
 
 This lab worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
 
-Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
 
-Remember, you are encouraged to explore and experiment.  Change something and see what happens!
+## 1. An Exploratory Data Analsis (EDA) example based on USarrests {#W4S1}
+
+For this example we will use a simple data set that contains various arrest rates per 100,000 population by US state.  Although it's a simple data set there is still some subtlety so we can meaningfully undertake an EDA.  
+
+```{r}
+# We will need the ggplot2 package.  This is part of the {tidyverse} package so if you have installed this already or perhaps specifically the {ggplot2} you are ok.  Otherwise uncomment the line below.
+# install.packages("ggplots")
+library(ggplot2)
+
+# The data() function can import various built-in datasets
+data("USArrests")
+```
+
+**Exercise 1.1:** What are the dimensions of the data set?  Are there any missing data points?
+
+**Exercise 1.2:** What are the names and data-type of each variable?  Which ones are numeric and which ones would we call categorical?  
+
+**Exercise 1.3:** Some variables are numeric and others are integers?  Why?  Does it matter?
 
 
-## 1. R Recap{#W4S1}
+Let's take a quick look.  
+```{r}
+View(USArrests)
+str(USArrests)
+```
+Note that there is no explicit variable for state, instead the creator of the data set has helpfully provided `row.names`
+
+```{r}
+# return all the row names i.e., state labels
+row.names(USArrests)
+```
+
+Next, let's generate some simple summary statistics for each column in the data frame.
+
+```{r}
+summary(USArrests)
+```
+However, some **visualisations** might help, in particular to help us understand the 'shape' of the data distributions.
+
+```{r}
+# Boxplot of Murder Arrests
+ggplot(USArrests, aes(y=Murder)) + 
+  geom_boxplot(notch = TRUE) +
+  labs(title = "Boxplot of Murder arrests rates per 100,000 by state",
+       x = "Murder arrests") +
+  coord_flip()       # Turn to horizontal
+
+# Boxplot of % of State Population that is urban
+ggplot(USArrests, aes(y=UrbanPop)) + 
+  geom_boxplot(notch = TRUE) +
+  labs(title = "Boxplot of % of State Population that is urban",
+       x = "") +
+  coord_flip()       # Turn to horizontal
+```
+
+**Exercise 1.4:** Try to show how each variable (extend this example to Assault and Rape arrests) varies using summary statistics and then some kind of graphical representation.  For continuous data you might consider Tukey's 5 number summary or something similar.  This could be represented by a histogram or density plot or even a boxplot which is based on the 5 number summary.
+
+Another way to look at distributions is a histogram with superimposed density plot.
+
+```{r}
+# A histogram of Murder arrests
+  
+ggplot(USArrests, aes(x=Murder)) + 
+# Histogram with scaled density instead of count on y-axis  
+  geom_histogram(aes(y=..density..),      
+                 binwidth=1,
+                 colour="black", fill="grey") +
+# Overlay with transparent (use the alpha parameter) blue density plot  
+  geom_density(alpha=.2, fill="blue") +   
+  xlab("Murder arrests per 100,000 population") +
+  ggtitle("Histogram and density plot of murder arrests by US state")
+```
+
+But maybe we wish to know which states have high murder arrest rates because we could combine this with some domain knowledge (or talk to experts, which is often a good idea).  One possibility is a bar chart/plot.
+
+```{r}
+# A bar chart of Murder arrests by state (but hard to read really)
+ggplot(data=USArrests, 
+       aes(x= row.names(USArrests), y=Murder)) +
+  geom_bar(stat="identity") + 
+  ggtitle("Barplot of murder arrests by US state") +
+  theme(axis.text.x = element_text(angle = 90))      # Rotate the labels for legibility
+```
+
+But it would be much nicer to see the barplot in some meaningful order, e.g., descending.
+
+```{r}
+# A bar chart of Murder arrests by state (in decreasing order of murder arrests)
+ggplot(data=USArrests, aes(x=reorder(row.names(USArrests), -Murder), y=Murder)) +
+  geom_bar(stat="identity", fill="orange") + 
+  ggtitle("Barplot of murder arrests by US state") +
+  xlab("") +                        # suppress the x-axis label
+  theme(axis.text.x = element_text(angle=90))
+```
+
+**Exercise 1.5:** {ggplot2} has a lot of flexibility and subtlety.  How would you change the colour of the bars (to whatever is your favourite colour)?  Suppose you want the reverse order i.e., ascending?
+
+
+### How do variables covary?
+
+At some point we should move on from examining each variable independently (univariate analysis) and explore how they vary together i.e., covary.
+
+```{r}
+# Output a cross-correlation matrix for the data frame
+# The non-parametric correlation coefficient Spearman's rho is used
+cor(USArrests, method = "spearman")
+
+# round the output to read more easily
+round(cor(USArrests, use = "all.obs", method = "spearman"),3)
+```
+
+**Exercise 1.6:** Why does the correlation matrix diagonal comprise 1s?
+
+Let's focus on murder arrests.  Is there a relationship with the proportion of the population who are urbanised i.e., do cities have higher arrest rates?  Let's explore this graphically.
+
+Here's a Base R scatterplot (but we'll do better in a minute!)
+
+```{r}
+plot(USArrests$Murder~USArrests$UrbanPop,
+     xlab = "Urban population percentage", ylab = "Arrests per 100,000",
+     main = "Urban population by US State vs Murder Arrests (1973)"
+)
+abline(lm(Murder ~ UrbanPop, data = USArrests), 
+              col = "blue")  
+```
+
+Now let's snazz it up a bit using {ggplot2}!
+
+```{r}
+# This plot also colours the data points by the Assault arrest rate
+# I also save the plot to a new object called p1
+p1 <- ggplot(data = USArrests, aes(x=UrbanPop, y=Murder, colour=Assault)) +
+      geom_point(shape = 1, size = 2) +
+      scale_colour_gradient(low = "blue", high = "red") +
+      stat_smooth(method="lm", se=TRUE) +    
+      ggtitle("Urban population by US State vs Murder Arrests (1973)") +
+      xlab("Urban population percentage") + 
+      ylab("Arrests per 100,000")
+p1
+ggsave("USArrestsPlotGGplot.png")      # Saves the last plot created as a file
+```
+
+
+**Exercise 1.7:** What do we see?
+
+**Exercise 1.8:** What other questions might you reasonably ask based on this data set?  
+
+
+
+## 2. R Recap{#W4S2}
 
 Let's recap some of the more *useful* R functions you will have already come across.  
 
-**Exercise 4.1:**  Suppose we want to get a quick overview of a data frame suggest three different functions that we could use.  Try them out with the built-in data set `mtcars`.
+**Exercise 2.1:**  Suppose we want to get a quick overview of a data frame, suggest three different functions that we could use.  Try them out with the built-in data set `mtcars`.
 
-**Exercise 4.2:** What are the dimensions (rows x columns) of your data frame?  
+```{r}
+# To load mtcars
+data("mtcars")
+```
 
-**Exercise 4.3:** What are the median values for the numeric values in your data frame?  
 
-**Exercise 4.4:** Report on some measures of dispersion (variability) for your numeric values e.g., interquartile range, range and standard deviation (sd) and variance (var) which is simply  $$sd^2$$.  You will see `summary()` provides some information.  You can google or use the help facility in RStudio.  HINT: `sd()` is another built-in function along with `var()`.   What other functions might you use?  You might also check out Tukey's 5 number summary (minimum, lower-hinge, median, upper-hinge, maximum) `fivenum()`.  This is a more robust description than just a mean and standard deviation.
+**Exercise 2.2:** What are the dimensions (rows x columns) of your data frame?  
 
-**Exercise 4.5:** If applying a summary statistic function to each column one at a time is tedious and we want more flexibility than using the defaults of `summary()` then one option is the (**s**implified) list **apply** function `sapply()`.  Remember a data frame is a list of vectors (columns or variables).  The 
+**Exercise 2.3:** What are the median values for the numeric values in your data frame?  
+
+**Exercise 2.4:** Report on some measures of dispersion (variability) for your numeric values e.g., interquartile range, range and standard deviation (sd) and variance (var) which is simply  $$sd^2$$.  You will see `summary()` provides some information.  You can google or use the help facility in RStudio.  HINT: `sd()` is another built-in function along with `var()`.   What other functions might you use?  You might also check out Tukey's 5 number summary (minimum, lower-hinge, median, upper-hinge, maximum) `fivenum()`.  This is a more robust description than just a mean and standard deviation.
+
+**Exercise 2.5:** If applying a summary statistic function to each column one at a time is tedious and we want more flexibility than using the defaults of `summary()` then one option is the (**s**implified) list **apply** function `sapply()`.  Remember a data frame is a list of vectors (columns or variables).  
 
 ```{r}
 # You need to provide your data frame name in this example
-lapply(???[, 1:length(???)], sd)
+my_dataframe_name <- "Put the name here"
+lapply(my_dataframe_name[, 1:length(my_dataframe_name)], sd)
 ```
 
 Be aware that sd expects a numeric type variable and your data frame might comprise a mixture.  WHat happens if a variable isn't numeric?
 
-**Extension Exercise 4.6:** Suppose you want to add more statistics to your apply-type function, over and beyond sd?  One way to achieve this is to have a user-defined function that contains the different statistics.  You need to return them as a list.  We will discuss this in Week 5.
+**Extension Exercise 2.6:** Suppose you want to add more statistics to your apply-type function, over and beyond sd?  One way to achieve this is to have a user-defined function that contains the different statistics.  You need to return them as a list.  We will discuss this in Week 5.
 
 
-## 2. Finding data {#W4S2}
+## 3. Finding other data {#W4S3}
 
 
-**Exercise 4.7:** Using `data()` explore some of the built-in data sets.  Choose a data set that looks interesting to you, but that is *not* a time a series. 
+**Exercise 3.1:** Using `data()` explore some of the built-in data sets.  Choose a data set that looks interesting to you, but that is *not* a time a series. 
 
 ```{r}
 # To list all the built-in data sets
 data()
-data("mtcars")
 ```
 
 NB If you have loaded a package like {ggplot2} you will see some additional data sets listed.
 
-
-
-
-## 3. An EDA example {#W4S3}
-
-**Exercise 4.8:** What are the dimensions of your data set?  Are there any missing data points?
-
-**Exercise 4.9** What are the names and data-type of each variable?  Which ones are numeric and which ones would we call categorical?  
-
-**Exercise 4.10** Try to show how each variable varies using summary statistics and then some kind of graphical representation.  For continuous data you might consider Tukey's 5 number summary or something similar.  This could be represented by a histogram or density plot or even a boxplot which is based on the 5 number summary.
+**Exercise 3.2:**
 
 
 ## 4. Exercise answers{#W4A}
@@ -86,20 +230,63 @@ NB If you have loaded a package like {ggplot2} you will see some additional data
 
 ![Answers?](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Answers.png)  
 
-**4.1:** There are many built-in functions for examining a data frame, in part because this is such an important activity.  Sometimes this boils down to personal preferences. 
+**1.1** You can get the dimensions via `str()` or `dim()`.
+
+To find missing data, i.e., `na` in R we could use various approaches.  A simple and quite elegant method which reports counts per variable is:
+
+```{r}
+# Reports counts of missing values by data frame column/variable
+colSums(is.na(USArrests))
+```
+
+
+**1.2** You can either see this information from `str()` or `colnames()`  
+
+The second approach is interesting (and elegant) because it uses one various **apply** functions e.g. lapply, sapply etc to apply the specified function (in this case class) to every column (vector) in the data frame.
+
+```{r}
+# Apply class() to each column in USArrests
+sapply(USArrests, class)
+```
+There are no categorical variables.  
+
+**1.3:** Strangely, UrbanPop and Assault seem to have been rounded to whole numbers whilst Murder and Rape have not.  Probably this is accidental, but suggests a slight loss of precision which might be unfortunate.
+
+
+**1.4:** Remember before you decide on how to show the variability or dispersion of a variable decide what data-type it is.  Statistics such as IQR and sd can be appropriate for numeric variables but make no sense if they're categorical.  For frequencies `table()` works simply and effectively.  
+
+**1.5:** The order is determined by the minus sign; here it's removed.
+
+```{r}
+# A bar chart of Murder arrests by state (in increasing order of murder arrests)
+myFavouriteColour <- "darkgrey"
+ggplot(data=USArrests, aes(x=reorder(row.names(USArrests), Murder), y=Murder)) +
+  geom_bar(stat="identity", fill=myFavouriteColour) + 
+  ggtitle("Barplot of murder arrests by US state") +
+  xlab("") +                        # suppress the x-axis label
+  theme(axis.text.x = element_text(angle=90))
+```
+
+**1.6:** A variable perfectly correlates with itself so the diagonal comprises 1s.  In some ways this is redundant information.  Also the matrix is symmetric so you could do away with the bottom left (or top right) part.
+
+
+**1.8:** It might help to think in terms of dependent variables (Murder, Assault, Rape) and explanatory (or independent) variables (UrbanPop).  
+
+
+**2.1:** There are many built-in functions for examining a data frame, in part because this is such an important activity.  Sometimes this boils down to personal preferences. 
 
 ```{r}
 # head() is simple and you can control the number of rows returned.
 head(mtcars)
 # tail() is also simple and perhaps is an antidote to the 'bias'(?) of always looking at the first few rows.
 tail(mtcars)
-# View() enables you to scroll through an entire data frame.  This works less well than there 1000s of rows.  Also unlike a spreadsheet you can’t manipulate any of the data.
+# View() enables you to scroll through an entire data frame.  This works less well when there 1000s of rows.  Also unlike a spreadsheet you can’t manipulate any of the data.
 View(mtcars)
 # str() provides more information on the data types and typical? values.
 str(mtcars)
 ```
 
-**4.2:** `str()` provides more information on the data types and the data frame dimensions.  If you just want the dimensions you can use `dim()`.
+**2.2:** `str()` provides more information on the data types and the data frame dimensions.  If you just want the dimensions you can use `dim()`.
 
 ```{r}
 # str() also provides information on the data frame dimensions.  If you just want the dimensions you can use dim()
@@ -107,7 +294,8 @@ str(mtcars)
 dim(mtcars)
 ```
 
-**4.3:** You could find the median values for the numeric values in your data frame one at a time, though this might get a bit repetitive/painful.  Alternatively you can use the `summary()` built-in function which can take a data frame as an argument.  Note that it returns multiple summary statistics for each variable.  
+
+**2.3:** You could find the median values for the numeric values in your data frame one at a time, though this might get a bit repetitive/painful.  Alternatively you can use the `summary()` built-in function which can take a data frame as an argument.  Note that it returns multiple summary statistics for each variable.  
 
 ```{r}
 median(mtcars$mpg)
@@ -116,38 +304,30 @@ median(mtcars$mpg)
 summary(mtcars)
 ```
 
-**4.4:** Summary() gives the range (max-min), interquartile range (Q3-Q1) as a standard default. `IQR()` is another built-in function along with the Tukey five number summary function `fivenum()`.  You can look up in the Help pane for more information. 
+
+**2.4:** Summary() gives the range (max-min), interquartile range (Q3-Q1) as a standard default. `IQR()` is another built-in function along with the Tukey five number summary function `fivenum()`.  You can look up in the Help pane for more information. 
 
 
-**4.5:** 
+**2.5:** 
 ```{r}
-sapply(mtcars[, 1:length(mtcars)], sd)
+sapply(mtcars, sd)
 ```
 
-Effectively the expression for the columns to use for `sapply()` function is saying search from 1 to the length of the list (ie all the columns of the data frame). If they're not numeric then the sd function returns NA and you get a warning message that NA is being coerced into the result list.  
+Effectively the `sapply()` function is saying for all the columns of the data frame (remember a data frame is technically a list of vectors) apply the function which is the second argument: in this case sd. If a column (list) is not numeric then the sd function returns NA and you get a warning message that NA is being coerced into the result list.  
 
 NB `sapply()`is actually a wrapper function for `lapply()`.  It formats the output more elegantly (where possible).  The apply family of functions are very useful for applying a function to multiple instances e.g., a vector or a data frame.  They're much faster than the equivalent for-loop and easier to code.
 
-**Extension Exercise 4.6:** Suppose you want to add more statistics to your apply-type function, over and beyond sd?  One way to achieve this is to have a user-defined function that contains the different statistics.  You need to return them as a list.  **We will discuss this in Week 5.**  
 
-**4.7** As you will see there are many built in data sets.  In addition some packages come with their own.  They generally quite small since they're mainly for teaching purposes.  
+**Extension Exercise 2.6:** Suppose you want to add more statistics to your apply-type function, over and beyond sd?  One way to achieve this is to have a user-defined function that contains the different statistics.  You need to return them as a list.  **We will discuss this in Week 5.**  
 
-Make sure you differentiate between time series and other data sets, mainly because there's often only a single variable for a TS (less interesting) and we haven't yet covered time series analysis and forecasting.   
 
-**4.8** You can get the dimensions via `str()` or `dim()`.
+**2.7** As you will see there are many built in data sets.  In addition some packages come with their own.  They generally quite small since they're mainly for teaching purposes.  
 
-**4.9** You can either see this information from `str()` or `colnames()`
 
-**4.10:** 
-Remember before you decide on how to show the variability or dispersion of a variable decide what data-type it is.  Statistics such as IQR and sd can be appropriate for numeric variables but make no sense if they're categorical.  For frequencies `table()` works simply and effectively.  
+**3.1:** Make sure you differentiate between time series and other data sets, mainly because there's often only a single variable for a TS (less interesting) and we haven't yet covered time series analysis and forecasting.   
 
-To do a boxplot using ggplot you could use the following R:
 
-```{r}
-ggplot(mtcars, aes(y=mpg)) + 
-geom_boxplot() +
-ggtitle("Boxplot of mpg")
-```
+
 
 
 
