@@ -5,7 +5,7 @@ output:
   html_document: default
   pdf_document: default
 author: Martin Shepperd
-date: 22/10/2021
+date: 27/10/2021
 ---
 
 
@@ -222,7 +222,11 @@ data()
 
 NB If you have loaded a package like {ggplot2} you will see some additional data sets listed.
 
-**Exercise 3.2:**
+**Exercise 3.2:** What are the dimensions of your data set?  Are there any missing data points?
+
+**Exercise 3.3:** What are the names and data-type of each variable?  Which ones are numeric and which ones would we call categorical?  
+
+**Exercise 3.4:** Try to show how each variable varies using summary statistics and then some kind of graphical representation.  For continuous data you might consider Tukey's 5 number summary or something similar.  This could be represented by a histogram or density plot or even a boxplot which is based on the 5 number summary.
 
 
 ## 4. Exercise answers{#W4A}
