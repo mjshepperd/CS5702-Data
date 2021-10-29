@@ -1,0 +1,100 @@
+---
+title: "Introducing ggplot"
+output: html_notebook
+date: 29/10/2021
+author: Martin Shepperd
+---
+
+# Introducing ggplot
+
+This is a short guide to help provide a feel for using ggplot2 and tobecome aware of the almost limitless possibilities.  
+
+```{r}
+# This assumes {ggplot2} and {ploty} have already been installed
+library(ggplot2)
+library(plotly)     # This package provides mouseover functionality to ggplots
+
+```
+
+To start with, we need some data so let's use the built in data set mtcars.
+
+```{r}
+# Load and view the data
+data("mtcars")
+View(mtcars)
+
+# Eyeball the structure
+str(mtcars)
+```
+
+
+```{r}
+# First identify the data
+p1 <- ggplot(mtcars, aes(x=hp, y=mpg))
+p1   # NB This plot isn't at all interesting as we haven't plotted anything (yet)!
+
+# Add points for scatterplot
+p1 <- p1 +
+      geom_point(col="steelblue", shape=3)   # Shape modifies the data point
+p1
+
+# Add a linear regression line using the lm() function
+p1 <- p1 +
+      geom_smooth(method = "lm")  
+p1
+
+# Add some meaningful titles to improve understandability
+p1 <- p1 +
+      ggtitle("Horsepower vs Fuel Consumption", subtitle="From the mtcars dataset") + 
+      xlab("Horse power") +
+      ylab("Miles per gallon")
+# View the p1 plot object
+p1
+```
+
+### Using {plotly}
+
+This package contains the ggploty() which adds a mouseover feature to ggplots.  Sometimes it's helpful to know the exact values of a data point.  Anyhow, I think it's quite cute!
+
+```{r}
+# Apply the function to the p1 ggplot object which has just been created.
+ggplotly(p1)
+```
+
+We can continue to play with the chart, by changing the regression line to a loess smoother hence we no longer assume a linear relationshp between hp and mpg.  Note that for high hp values the pattern becomes weak and the confidence intervals widen accordingly.
+
+```{r}
+# Or to add extra information we can additionally display row names (ie the car type)
+p2 <- ggplot(mtcars, aes(x=hp, y=mpg, text = paste("Car:", rownames(mtcars)))) +
+      geom_point(col="steelblue", shape=3) +
+      geom_smooth(method = "loess", se = T) +
+      ggtitle("Horsepower vs Fuel Consumption", subtitle="From the mtcars dataset") + 
+      xlab("Horse power") +
+      ylab("Miles per gallon")
+ggplotly(p2)
+```
+
+
+### Adding extra dimensions
+
+Let's enrich our visual analysis with a third variable `am` which represents transmission type.  We might hypothesise that manual cars will be more fuel efficient which is borne out by the plot below.  NB I strip out some of the previous features such as changing the colour of the data points, so we can follow the next tranche of additions.  
+
+We note from the `str()` function that all variables are numeric even though am is actually a grouping factor and the 0 and 1 values are entirely arbitrary.  To use it meaningfully we need to turn it into a **factor**.  Also we need to check the meta-data to understand how the levels are coded (as 0 and 1).  
+
+```{r}
+# Add a 3rd variable (weight) to analysis, ie 
+# do automatic cars have worse fuel consumption?
+# First turn am into a factor
+mtcars$am <- as.factor(mtcars$am)
+
+# Use colour of data points to different transmission types
+p3 <- ggplot(mtcars, aes(x=hp, y=mpg)) +
+      geom_point(shape=3, aes(color=am)) +
+      geom_smooth(method = "loess") +       # Change from a linear regression to a loess smoother
+      ggtitle("Horsepower vs Fuel Consumption", subtitle="From the mtcars dataset") + 
+      xlab("Horse power") +
+      ylab("Miles per gallon") +
+      scale_color_discrete(name="Transmission",
+                       labels=c("Automatic","Manual"))
+p3
+```
