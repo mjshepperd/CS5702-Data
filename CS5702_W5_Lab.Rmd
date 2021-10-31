@@ -3,14 +3,16 @@
 title: "CS5702 W5 Lab Notebook"
 output: html_notebook
 author: Martin Shepperd
-date: 27/10/2020
+date: 30/10/2021
 ---
 
 ## Worksheet Contents
 
-1. [R Recap](#W5S1)  
-2. Checking for quality with R
-4. [Exercise answers](#W5A) 
+1. [Seminar example](#WS1)
+2. [R Recap](#WS2)  
+3. [Dealing with missingness](#WS3)
+4. [Exercise answers](#WSA) 
+
 
 ##0. Worksheet Introduction
 
@@ -21,16 +23,89 @@ You should:
 1. have studied the Week 4 seminar+lab worksheet  
 2. be familiar (listened to/read) the Week 5 Lecture "Data quality, cleaning and imputation"  
 3. be able to create and manipulate data frames  
-4. be able to apply straight forward summary statistics eg summary() and create basic plots eg scatterplots    
+4. be able to apply straightforward summary statistics e.g. summary() and create basic plots e.g. barplots, histograms and scatterplots      
 
 This lab worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
 
 Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
 
-Remember, you are encouraged to explore and experiment.  Change something and see what happens!
+
+## 1. Seminar Checking Quality in the Education Data Set {#WS1}
+
+This simple (fictitious) example shows the use of the {validate} package.  We need the data set education.  
+
+```{r}
+# Load the {validate} package.  
+# You will need to install the package the first time, i.e.,
+# install.packages("validate")
+library(validate)
+library(tidyverse)
+
+# Load the example data from
+# 
+GitHubFileName <- "https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/CS5702_DatQualCheckingEg2.csv"
+education.DF <- read.csv(GitHubFileName, header = T, stringsAsFactors = T)
+```
+
+Let's eyeball the data frame `education.df`.
+
+```{r}
+# Examine the first 6 rows
+head(education.DF)
+```
+
+Next, let's look at the structure of the data frame.
+
+```{r}
+str(education.DF)
+```
+We can see some oddities like three levels for `Sex`.  
+
+**Exercise 1.1:** Using the `table()` function check the counts/frequencies and the number of levels for `Education` and `Sex`.  What potential problems do you observe?  
+
+**Exercise 1.2:** One problem with `Sex` is the level `"F "`.  But it would be nice to locate such observations.  This can be accomplished using the `subset()` combined with an appropriate condition.
+
+```{r}
+# Display any rows from the data frame with incorrect values for Sex
+subset(education.DF, Sex == "F ")
+```
+Extend the above code to also retrieve rows/observations from `education.DF` for invalid levels for `Education`.
 
 
-## 1. R Recap{#W5S1}
+
+### Using the {validate} package
+
+But let's be **systematic**.  First, let's define all the quality checking rules.
+
+```{r}
+# Define the rules for {validate}
+# using the `validator()` to store the rules so they can be used more than once.
+
+education.rules <- validator(okEduc = is.element(Education,c("BSc","MSc","PhD")),
+                             okSex = is.element(Sex,c("F","M")),
+                             NonNegSalary = Salary >= 0,
+                             NonNegTax = IncomeTax >= 0,
+                             TaxLessThanSalary = Salary >= IncomeTax)
+```
+
+Now we can apply these rules to our data set.
+
+```{r}
+qual.check <- confront(education.DF,education.rules)
+summary(qual.check)
+```
+
+We can also check this graphically, e.g., with a bar chart.
+
+```{r}
+barplot(qual.check, xlab = "")
+```
+
+**Exercise 1.3:** Add an additional data quality rule to check that the `Salary` is less than 500,000.  
+
+
+
+## 2. R Recap{#WS2}
 
 Let's recap some of the more *useful* R functions you will have already come across. 
 
@@ -42,7 +117,7 @@ View(women)
 ```
 
 
-**Exercise 5.1:** We have emphasised the value of persisting with `ggplot2`.
+**Exercise 2.1:** We have emphasised the value of persisting with `ggplot2`.
 
 Using {ggplot2} produce a scatter plot of height vs weight.
 
@@ -52,28 +127,39 @@ As a basic template you can start with this:
 >   geom_point() 
 
 
-**Exercise 5.2:** 
+**Exercise 2.2:** 
 
-You could add lines to join the data points using `geom_line()`.  HINT: don't forget to add a `+` between each additional ggplot function you want to add to the plot.  NB If there isn't a clear trend or the data do not naturally form a series joing the data points by lines may confuse rather than illuminate!
+You could add lines to join the data points using `geom_line()`.  HINT: don't forget to add a `+` between each additional ggplot function you want to add to the plot.  NB If there isn't a clear trend or the data do not naturally form a series joining the data points by lines may confuse rather than illuminate!
 
-**Exercise 5.3:**
+
+**Exercise 2.3:**
 
 Add a suitable title using `ggtitle("????")`.  Don't forget the `+`.
 
-**Exercise 5.4:**
+
+**Exercise 2.4:**
 
 Experiment with colour, line thickness and data point symbols.  FOr an excellent tutorial and lots of guidance on ggplot2 see the [STDHA website](http://www.sthda.com/english/wiki/ggplot2-line-plot-quick-start-guide-r-software-and-data-visualization#create-line-plots-with-points)
 
-**Exercise 5.5:**
 
-You can assign your plots to an R object, either to further manipulate it or to store it  and display at a later stage.  Assign your scatterplot to a new R variable `plot1`.  What can you do with it?  What data type is it?  See if you can modify it?
+**Exercise 2.5:**
 
-
-## 2. Checking for quality with R{#W5S2}
+You can assign your plots to an R object, either to further manipulate it or to store it  and display at a later stage.  Assign your scatterplot to a new R variable `plot1`.  What can you do with it?  What data type is it?  See if you can modify it?  
 
 
+### {dplyr} package 
 
-### Dealing with missingness
+- This is a really useful package for manipulating data frames 
+- Bundled with {tidyverse} it contains the following functions:  
+    - `mutate()` adds new variables as functions of existing variables  
+    - `select()` picks variables based on their names  
+    - `filter()` picks cases based on their values
+    - `arrange()` changes the ordering of the rows 
+
+
+
+
+## 3. Dealing with missingness{#WS3}
 
 Data quality and cleaning is principally concerned with NA.  This special data type comes with some useful functions such as `is.na()`.
 
@@ -90,13 +176,27 @@ or
 is.na(numVector[4])
 ```
 
+You can also count occurrences exploiting the fact that `is.na()` returns 0 or 1 which represent false or true.  We can count the 'true' values (i.e., when the data item does equal NA).
 
-**Exercise 5.6:**
+```{r}
+# Applying the function colSums() to is.na()
+colSums(is.na(education.DF))
+```
+
+
+**A missingness tip**  
+
+NB Missing values cannot be compared, even to themselves, so you **can't** use comparison operators to test for the presence of missing values, e.g., `numVector[4] == NA` is **never** TRUE.  
+
+You must use missing values functions such as `is.na()`.
+
+
+**Exercise 3.1:**
 
 Create your own character vector `charVector` with 10 elements.  Make one of them (10th) empty i.e., "".  Test to see how `is.na()` treats these.  Replace "" with NA programmatically.
 
 
-**Exercise 5.7**
+**Exercise 3.2:**
 
 Typing lots of values into a vector manually can become tedious.  So you can save time using the `rep()` function, e.g., 
 
@@ -104,15 +204,55 @@ Typing lots of values into a vector manually can become tedious.  So you can sav
 numVector <- rep(c(1, 2, 3), times = 5)
 numVector
 ```
-Use this approach to make a 20 element character vector `charVector` which repeats the sequence "A", "B", NA.  There are everal ways of achieving this but one option is to use the `length.out` parameter. 
+Use this approach to make a 20 element character vector `charVector` which repeats the sequence "A", "B", NA.  There are several ways of achieving this but one option is to use the `length.out` parameter. 
 
 
-## 4. Exercise answers{#W5A}
+**Exercise 3.3:**  Count the number of missing values in the data frame `women` by column/variable.  
+
+
+### Cleaning missing data
+
+There are essentially two choices (i) to delete incomplete cases or (ii) to impute reasonable value to replace the NA.  
+
+**Deleting incomplete cases**
+
+**Exercise 3.4:**  Adapt the code below to clean `education.DF` and remove any observations (i.e., rows) that contain 1 or more NAs.  
+
+```{r}
+# This is some generic code using the built-in complete.cases() function
+# newDF <- myDF[complete.cases(mydata),]
+```
+
+
+**Imputing new values**
+
+This is a potentially quite an advanced topic and there many sophisticated methods.  It also depends on determining the type of missingness mechanism.  You can read more in Chapter 15 of Kabacoff(2015) if you are interested.  There are many packages to support more advanced techniques e.g., mice and VIM.
+
+However, we will only quickly look at some very simple methods such as median (for numeric data) and mode (for categorical data).  There is a general purpose package {Hmisc} which includes a simple `impute()` function.
+
+```{r}
+# The first time install the package and uncomment the next R statement
+# install.packages("Hmisc")
+library(Hmisc)
+
+# Use the median value to replace the NA for IncomeTax
+# The impute function (2nd argument) defaults to median if you don't specify
+impute(education.DF$IncomeTax, median)
+```
+
+**Exercise 3.5:** Update the function call to impute using a "hot deck" method. (HINT: try the argument "random" with the quotation marks.)  Write a loop to do this 20 times.  
+
+
+**Exercise 3.6:** Make a copy of the data frame `education.DF` and apply the imputation function.  Experiment with injecting other NA values.  What happens if there are several missing values?  
+
+
+
+## 4. Exercise answers{#WSA}
 
 
 ![Answers?](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Answers.png)  
 
-**5.1:** The package {ggplot2} is bundled with {tidyverse} so you probably have already installed it.  You can check using `pkgs <- installed.packages(); View(pkgs)` which will list information about every installed package, version etc.
+**2.1:** The package {ggplot2} is bundled with {tidyverse} so you probably have already installed it.  You can check using `pkgs <- installed.packages(); View(pkgs)` which will list information about every installed package, version etc.
 
 You only need install a package (onto your computer drive) *once*.  After that you only need read it into memory each new R session with a `library()` function. 
 
@@ -122,7 +262,7 @@ ggplot(data = women, aes(x = height, y = weight)) +
   geom_point()
 ```
 
-**5.2:** 
+**2.2:** 
 
 ```{r}
 ggplot(data = women, aes(x = height, y = weight)) + 
@@ -133,7 +273,7 @@ ggplot(data = women, aes(x = height, y = weight)) +
 
 Don't forget the `+` between geom_point() and geom_line().
 
-**5.3:**
+**2.3:**
 
 There are almost limitless possibilities!
 
@@ -145,7 +285,7 @@ ggplot(data = women, aes(x = height, y = weight)) +
 ```
 
 
-**5.4:**
+**2.4:**
 
 ```{r}
 ggplot(data = women, aes(x = height, y = weight)) + 
@@ -156,7 +296,7 @@ ggplot(data = women, aes(x = height, y = weight)) +
 NB The colour contrast isn't great so these choices might not be optimal.  Don't get carried away!!
 
 
-**5.5:**
+**2.5:**
 
 You can assign your plots to an R object, either to further manipulate it or to store it  and display at a later stage.
 
@@ -167,7 +307,8 @@ plot1 <- ggplot(data = women, aes(x = height, y = weight)) +
   ggtitle("Scatterplot of Women's Weight vs Height")
 ```
 
-**5.6**
+
+**3.1**
 
 ```{r}
 charVector <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "")
@@ -180,10 +321,38 @@ charVector[10] <- NA
 is.na(charVector)
 ```
 
-**5.7**
+
+**3.2**
 
 ```{r}
 charVector <- rep(c("A", "B", NA), length.out = 20)
 charVector
+```
+
+
+**Exercise 3.3**  To count the number of missing values in the data frame `women` by column/variable. 
+
+```{r}
+colSums(is.na(women))
+```
+
+**Exercise 3.4**  Adapt the code below to clean `education.DF` and remove any observations (i.e., rows) that contain 1 or more NAs.  
+
+```{r}
+newDF <- education.DF[complete.cases(education.DF),]
+```
+
+
+**Exercise 3.6:** Make a copy of the data frame `education.DF` and apply the imputation function.  Experiment with injecting other NA values.  What happens if there are several missing values?  
+
+```{r}
+# Make a copy
+newDF2 <- education.DF
+
+# Impute values for NAs in IncomeTax
+newDF2$IncomeTax <- impute(newDF2$IncomeTax, median)
+
+# You can inject new NAs, e.g.,
+newDF2$Salary[3] <- NA
 ```
 
