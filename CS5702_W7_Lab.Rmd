@@ -3,27 +3,141 @@
 title: "CS5702 W7 Lab Notebook"
 output: html_notebook
 author: Martin Shepperd
-date: 13/11/2020
+date: 14/11/2021
 ---
 
 ## Worksheet Contents
 
-1. [Another data quality example](#W7S1)  
-2. [Exercise answers](#W7A)  
+1. [Text processing and word clouds](#W7S1)  
+2. [Another data quality example](#W7S2)  
+3. [Exercise answers](#W7A)  
 
 ##0. Worksheet Introduction
 
 <span style="color: darkorange;">**Pre-requisites**</span>
 
-   
 This lab worksheet is organised as an RMarkdown file.  You can **read** it.  You can **run** the embedded R and you can **add** your own R.  I suggest you save it as another file so, if necessary, you can revert to the original.  
 
 Whenever you click **Preview** in the RStudio menu it will render into nicely formatted html which you can look at it in the Viewing Window in RStudio or any web browser.  You may find this easier to read, however, you must edit the .Rmd file, i.e., the RMarkdown in the Edit Pane if you want to make any changes. 
 
-Remember, you are encouraged to explore and experiment.  Change something and see what happens!
+
+## 1. Text processing and word clouds{#W7S1} 
 
 
-## 1. Another data quality example]{#W7S1}
+**Exercise 1.1:** Make a vector of words (character strings) named `wordList` that contains hello in five different languages.  HINT try the combine function.  
+
+
+**Exercise 1.2:** Compare the edit distance between any two words in your vector using the function `adist()`.  Then compare the entire vector.  What would happen if the vector were very large?
+
+
+### 1.1 Creating a wordcloud
+
+Make sure you install the packages the first time.  
+
+```{r}
+library(tm)           # Text mining package
+# library(SnowballC)  # Implements Porter's word stemming algorithm for collapsing words to a common root
+library(wordcloud)    # Functionality to create  wordclouds, visualise differences/similarity between documents
+
+# NB No stemming in this code so SnowballC isn't loaded.
+```
+
+Set the max numbers of words for the wordcloud and also stopwords.  
+
+```{r}
+set.seed(1234)  # So get the same output each time
+mw <- 70        # max number of words in wordcloud
+
+myStopWords <- c("olympics","four","eight","matters","use","void",
+                 "next","know","whether","years","whats",
+                 "roundtable")
+```
+
+
+Here you need to supply the text file to be analysed.  Then it needs cleaning.
+
+```{r}
+text <- readLines(file.choose())
+
+#### Load the data as a corpus
+docs <- Corpus(VectorSource(text))
+
+#### Clean it
+
+# Convert the text to lower case
+docs <- tm_map(docs, content_transformer(tolower))
+# Remove numbers
+docs <- tm_map(docs, removeNumbers)
+# Remove punctuation
+docs <- tm_map(docs, removePunctuation)
+# Remove english common stopwords
+docs <- tm_map(docs, removeWords, stopwords("english"))
+# Remove extra stop words
+docs <- tm_map(docs, removeWords, myStopWords) 
+# Eliminate extra white spaces
+docs <- tm_map(docs, stripWhitespace)
+# Text stemming
+# Don't do this because the word cloud will look weird
+# docs <- tm_map(docs, stemDocument)
+```
+
+
+Build document term matrix
+
+```{r}
+m <- as.matrix(TermDocumentMatrix(docs))
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+head(d, mw)
+```
+
+
+Produce word cloud
+
+```{r}
+# Can change the min word freq from 1 if desired
+cloud1 <- wordcloud(words = d$word, freq = d$freq, min.freq = 1,
+          max.words=mw, random.order=FALSE, rot.per=0.25, 
+          colors="black")
+cloud1
+```
+
+
+
+**Exercise 1.3:** Run the above code with your own text file.  Update the list of stopwords.
+
+
+###1.3: A quick Sentiment Analysis demo
+
+There are many packages in R to address this.  We will use {sentimentr} because it includes valence shifting e.g., via negation which makes it more accurate (but slower).  
+
+```{r}
+# Remember to install sentimentr the first time!
+library(sentimentr)
+```
+Set up some text to analyse
+
+```{r}
+mytext <- c(
+    'I hate really bad dogs!',
+    'I am your best friend, always kind and loving.',
+    'Do you really like it?  I\'m not a fan.'      # NB escape character \ to prevent ' being misinterpreted
+)
+
+mytext <- get_sentences(mytext)
+```
+
+And now to do the sentiment analysis.  Negative values indicate negative sentiment.  
+
+```{r}
+sentiment(mytext)
+```
+
+**Exercise 1.4:** See Tyler Rinker's [GitHub repo](https://github.com/trinker/sentimentr#the-equation) to explore more functionality.  
+
+
+
+## 2. Another data quality example]{#W7S2}
 
 It uses fictitious data contained in a pre-saved R data object dataQualEg1.DF.  
 
@@ -35,7 +149,7 @@ library(validate)
 ```
 
 
-**Exercise 7.1:** What does {validate} do?  Why is it useful for data quality checking in R?  
+**Exercise 2.1:** What does {validate} do?  Why is it useful for data quality checking in R?  
 
 
 First you need to load the R data object (I've put the .Rda file onto GitHub).
@@ -51,7 +165,7 @@ str(dataQualEg1.DF)
 
 ## Get an overview of the data
 
-**Exercise 7.2:** How many observations/cases are there?  Use an R function to find out.
+**Exercise 2.2:** How many observations/cases are there?  Use an R function to find out.
 
 
 We can 'eyeball' the data with `View()` but it's hard to see everything even if there are only two variables.  
@@ -61,13 +175,13 @@ summary(dataQualEg1.DF)
 ```
 
 
-**Exercise 7.3:**  The spread of ages looks problematic.  Why?
+**Exercise 2.3:**  The spread of ages looks problematic.  Why?
 
 
 Also let's look at the levels/ categories for `married` since `summary()` is less informative for a character vector.
 
 
-**Exercise 7.4:**  What is a simple function to examine `married`?  Do you see any problems?
+**Exercise 2.4:**  What is a simple function to examine `married`?  Do you see any problems?
 
 
 
@@ -84,10 +198,10 @@ val.check1 <- check_that(dataQualEg1.DF, age > 0, age > 115, married == "Y" | ma
 barplot(val.check1)
 ```
 
-**Exercise 7.5:** What is the problem with our validation rules?  Correct the error.  
+**Exercise 2.5:** What is the problem with our validation rules?  Correct the error.  
 
 
-**Exercise 7.6** What other rules are missing?  Can you think of any referential integrity checks?  
+**Exercise 2.6** What other rules are missing?  Can you think of any referential integrity checks?  
 
 ## Some data cleaning
 
@@ -96,37 +210,52 @@ dataQualEg1.DF$married[dataQualEg1.DF$married == "n"] <- "N"
 table(dataQualEg1.DF$married)
 ```
 
-**Exercise 7.7**
+**Exercise 2.7**
 
 Complete the cleaning of `married`.  HINT what other levels are redundant for married`?  What will you do for ages in excess of 115?
 
 
 
-## 2. Exercise answers{#W7A}
+## 3. Exercise answers{#W7A}
 
 
 ![Answers?](https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Answers.png)  
 
 
-**7.1:**  The package {validate} allows you to define checking or validation rules and apply them to your data set(s).  For more information visit the very useful and detailed [Introduction](https://cran.r-project.org/web/packages/validate/vignettes/introduction.html).    
+**1.1:** 
+
+```{r}
+wordList <- c("Hello", "Bonjour", "Hola", "Hej", "Hallo")
+```
+
+**1.2:**
+
+```{r}
+# To compare the edit distance the entire word vector.
+adist(wordList)
+```
 
 
-**7.2:** 
+
+**2.1:**  The package {validate} allows you to define checking or validation rules and apply them to your data set(s).  For more information visit the very useful and detailed [Introduction](https://cran.r-project.org/web/packages/validate/vignettes/introduction.html).    
+
+
+**2.2:** 
 ```{r}
 nrow(dataQualEg1.DF)
 ```
 NB `length(dataQualEg1.DF)` gives the number of variables/columns of a data frame, *not* the number of rows because technically a data frame is a list of vectors and the `length()` function returns the length of a list, which is not what you want in this instance.  
 
 
-**7.3:** `age` looks problematic since the maximum age is 123.  The oldest person to have lived was 122 so 123 is highly unlikely.  
+**2.3:** `age` looks problematic since the maximum age is 123.  The oldest person to have lived was 122 so 123 is highly unlikely.  
 
 
-**7.4:**
+**2.4:**
 ```{r}
 table(dataQualEg1.DF$married)
 ```
 
-**7.5:**
+**2.5:**
 
 We should test for less than 115 not greater than!
 
@@ -135,7 +264,7 @@ val.check1 <- check_that(dataQualEg1.DF, age > 0, age < 115, married == "Y" | ma
 ```
 
 
-**7.6:**
+**2.6:**
 ```{r}
 val.check1 <- check_that(dataQualEg1.DF, 
                          age > 0, 
@@ -145,4 +274,4 @@ val.check1 <- check_that(dataQualEg1.DF,
 ```
 
 
-**7.7** A simple solution for ages > 115 is to replace them with NA since it's difficult to know what the correct value should be.  Another possibility is data imputation (as discussed in the Week 7 Lecture).  A naive approach could be to use the mean or median.  
+**2.7** A simple solution for ages > 115 is to replace them with NA since it's difficult to know what the correct value should be.  Another possibility is data imputation (as discussed in the Week 7 Lecture).  A naive approach could be to use the mean or median.  
