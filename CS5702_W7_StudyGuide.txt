@@ -1,0 +1,109 @@
+TABLE OF CONTENTS
+Module details	1
+Access to support material and additional information	1
+Introduction/aims/background	1
+Learning outcomes	2
+Method of teaching	2
+Lecture Seminar Programme	2
+Reading List	3
+Assessment	3
+Deliverables and Feedback - important dates	3
+Additional Vital Information	3
+
+MODULE DETAILS
+Module leader	Prof Martin Shepperd
+Department	Computer Science
+Credits	15
+Other staff	Prof Xiaohui Liu
+Contact and private study time	Lectures			  9 hours
+Labs/Seminars		 18 hours
+Coursework Study	 50 hours
+General Study		 73 hours
+Total			150 hours
+Assessment
+	This is covered by the shared with CS5701 assessment blocks: CS5801 Quantitative Data Analysis (coursework); CS5802: Critical Analysis of Modern Data (3 hour open book exam).  
+
+
+ACCESS TO SUPPORT MATERIAL AND ADDITIONAL INFORMATION
+The majority of the teaching, learning and support material is provided electronically via the University’s Brightspace VLE system. Note that the details provided in this study guide are based on the formal module syllabus for this module which sets out the agreed content, learning outcomes, assessment and teaching methods. Module syllabus and scheme of studies documents for your programme of study can be found by on the University’s Quality Assurance web pages.
+
+INTRODUCTION/AIMS/BACKGROUND
+The aim of this module is to:
+
+Provide an introduction to data management and exploration. 
+This entails an appreciation of the richness and availability of different data sources coupled with an overview of techniques, methods and processes for modern data analysis. The students will learn to plan and undertake a data analytics project. Basic concepts of data quality, management and retrieval will be discussed.  Strategies and approaches to data preparation and cleaning (often referred to as wrangling) will be presented. The importance of adopting a disciplined and engineering approach (rather than hacking) is emphasised. Exploratory data analysis (EDA) methods and data visualisation techniques will be introduced. 
+
+Throughout this study block our approach will be hands-on and practical in nature.  We will use the R-ecosystem as our primary toolset.  R is a widely used programming language in data science.  
+
+Note that this module comprises this study block (CS5702) and separate, but associated, assessment blocks (CS5801 and CSCS802) which are shared with CS5701 (Quantitative Data Analysis).  The rationale for shared assessment blocks is that it makes little sense to think about data without considering what it will be used for, and it makes little sense to do statistical analysis without considering the underlying data.  This documentation refers to the study block ‘Modern Data’.
+
+LEARNING OUTCOMES
+Whatever module or programme of study you are studying for at Brunel University London, there are learning outcomes (LO) that you must meet/achieve in order to be awarded the credits which comprise the module and programme of study.  In order to get a pass grade (C- or above) in this module, you must meet these learning outcomes below, that is, you must demonstrate ability to:
+
+LO1:	Develop understanding of modern data and identify relevant methods and technologies for data management, data retrieval and data sharing. 
+LO2:	Critically evaluate the quality of data and plan the steps required for data preparation and management. 
+	
+METHOD OF TEACHING
+
+Our approach to teaching will be predominantly practical with an emphasis upon using tools and techniques to solve real-world data problems.  In general, you will find all the material you need, or links to the material, in the online module book Modern Data.
+
+LECTURE SEMINAR PROGRAMME
+This module has been scheduled to run during Term 1 and the lectures are scheduled as follows:
+
+Week	Lecture Topic	Lecturer	Labs
+1	1. Module overview, motivating examples, the R ecosystem	MS	Joint with QDA: What is data science?  What can we do with R? Basic R and descriptive stats.
+2	2. The richness of data: structured and unstructured	MS	Analysing the module survey. 
+3	3. Engineering or hacking? Readable code and reproducible data analysis	MS	Finding and importing data. Simple visualisation of time series, smoothing. 
+4	4. Exploratory data analysis (EDA) and visualisation	MS	Exploring data: more complex questions (salary and gender analysis)
+5	5. Data quality, cleaning and imputation	MS	Cleaning data set examples. Imputation with R packages. 
+6	6. Presenting data effectively	MS	Interactive data: R and shiny
+ 
+7	7. Processing and analysing text	MS	Word clouds, etc
+8	8. Data Science and Machine Learning: an introduction	XL	Predictive modelling and evaluation in R.
+9	9. Data for good	XL	Coursework (CS5801) surgery
+10-12	10. Exam (CS5802) revision	MS/XL	
+13	Exam week	-	-
+
+
+NB Labs are intended primarily as technical surgeries to undertake the supplied independent study activities (worksheets).
+
+READING LIST
+
+Core reading list
+Kabacoff, R., 2015. R in Action: Data Analysis and Graphics with R, 2nd Edn., O’Reilly Safari: https://learning.oreilly.com/library/view/r-in-action/9781617291388/. (There are also associated videos here.)
+Peng, R.D. and Matsui, E., 2015. The art of data science. A Guide for Anyone Who Works with Data. Skybrude Consulting, LLC, download from https://leanpub.com/artofdatascience 
+Zumel, N., Mount, J. and Porzak, J., 2019. Practical Data Science with R. 2nd Edn., O’Reilly Safari: http://tinyurl.com/yxjhwvuf (There are also associated videos but based on the 1st Edn  here.) 
+
+Supplementary Reading
+
+Online / free books
+Grolemund, G,. 2014. Hands-On Programming with R online at https://jjallaire.github.io/hopr/
+Grolemund, G. and Wickham, H., 2018. R for data science.  Available from https://r4ds.had.co.nz/ 
+Navarro, D., 2019. Learning statistics with R: A tutorial for psychology students and other beginners: version 0.6.1. Adelaide, Australia: University of Adelaide. Available from here 
+
+Other books in the library
+Campbell, M., 2020. Learn RStudio IDE. New York: Apress.
+Dinov, I.D., 2018. Data science and predictive analytics: Biomedical and health applications using R. Springer.
+Mailund, T., 2017. Beginning Data Science in R: Data Analysis, Visualization, and Modelling for the Data Scientist. Apress.
+Mailund, T., 2019. R Data Science Quick Reference: A Pocket Guide to APIs, Libraries, and Packages. Apress.
+Matloff, N., 2019. Probability and statistics for data science: Math+ R+ data. CRC Press.
+Mount, G., 2021. Advancing into analytics: from Excel to Python and R, O’Reilly Press.
+
+Please note that there is a wealth of material, much of it freely available on the web or in the library.  The above are suggestions but you are encouraged to search for and make use of other sources.  
+
+It is important that you learn to become self-reliant and able to access and assimilate material for yourself. Many of the topics necessary for this project will not be covered by lectures. Therefore, you will need to work through the exercises and guidance material provided in labs, via Brightspace or from your own investigations.
+
+ASSESSMENT
+
+This is detailed in the Assessment Blocks CS5801 and CS5802, because technically CS5702 is only a teaching block and the assessments have different module codes.
+
+LATE COURSEWORK
+
+n.a.
+
+DELIVERABLES AND FEEDBACK - IMPORTANT DATES
+
+n.a.
+
+ADDITIONAL VITAL INFORMATION
+The College Student Handbook can be found on the University’s web pages. The handbook is a useful source of information for all aspects of your studies, including procedures of how to inform us of problems you are facing with your studies, how to apply for an extension to your coursework, plagiarism, house style for assignments, joint and group work submissions and other important matters.  The Department assumes that you familiarise yourself with this information, so you will need to look at these pages carefully at various times throughout your studies.  The Department also operates within the rules and regulations of the University more generally, and you should also look at what are known as 'Senate Regulations’ under the University’s web pages. These policies and procedures might change from one academic year to another and it is in your own interest to keep yourself aware about them and their possible changes. 
