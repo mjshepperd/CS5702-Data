@@ -1,0 +1,131 @@
+---
+title: "DEMO!!!! CS5802: Critical Analysis of Modern Data Exam"
+output: html_notebook
+date: 25/11/2020
+author: Johnny Student
+version: 0.4 (Draft)
+---
+
+![BUL Logo](https://www.brunel.ac.uk/SiteElements/images/brunel-logo-blue.png)
+
+
+# Exam Question Paper
+
+#### College/ Institute:	College of Engineering, Design & Physical Sciences (CEDPS)
+#### Department: Computer Science	
+#### Exam Author(s): Martin Shepperd and Isabel Sassoon
+#### Module Code: CS5802
+#### Module Title: Critical Analysis of Modern Data Exam
+#### Month: 0930-1230, 15th December,	2020
+#### Exam Type: Full
+#### Duration: 3 hours plus 5 minutes upload time  
+
+
+## Exam instructions  
+
+1. Uploads need to be **COMPLETED** before the end of the upload time.  Late work will not be accepted.  If you have any problems uploading work you must notify us that you are experiencing difficulties in uploading and/or submitting your work, using the contact details you have been given (in exam "Live Chat" or phone 01895 268860).  Work sent via email will not be marked.  
+2. You should upload a *single answer file* (as an RMarkdown file) based on **this** Exam Template containing your answers which will be a mix of text and R code.  
+3. When you save your notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).  There is no need to upload any rendered HTML or PDF files.  
+4. Do not edit the YAML header (lines 1-7) except to replace xxx with your student id.  
+5. Write your answers using RMarkdown.  For guidance see a [helpful blog](https://www.dataquest.io/blog/r-markdown-guide-cheatsheet/#tve-jump-17333da0719) or use the R Markdown cheatsheet which can be accessed from within RStudio by selecting `Help > Cheatsheets > R Markdown Quick Reference`.  
+6. If you wish you can obtain a formatted view of this exam template and your answers by using the Preview button in RStudio.  
+7. You may *not* communicate with other candidates nor share information/discuss exam-related matters with any external person for the duration of the exam.  
+
+## Exam rubric
+
+1. The exam comprises two equally weighted sections each with three questions, making a total of SIX questions.  You should attempt *all* questions.  
+2. The allocated marks are indicated for each question and sub-question.  There is a total of 100 marks.  
+3. Note that although each section notionally 'belongs' to either CS5701 or CS5702 you are encouraged to draw on any relevant material.  
+4. This is an open book exam.  
+5. The end of the exam questions is delimited by "*****END OF EXAM*****".    
+
+By continuing beyond this point, you confirm that you have read the information and instructions above and understand the conditions of this examination.  
+
+---
+
+## Section I: Modern Data
+
+**Question 1: (Total 15 marks)**
+
+i) Explain, with examples, what are the main atomic (basic) data types built into R? **(4 MARKS)**
+
+    -- Answer here  
+
+
+ 
+ii) What data type is `x`? **(2 MARKS)**
+
+```{r}
+# Do not edit this code
+x <- c("a", "", NA, "d")
+```
+
+
+iii) Edit `x` so that it comprises the letters "a", "b", "c", "d".  Output the new contents. **(2 MARKS)**
+
+```{r}
+# Add your code to update x below
+
+```
+
+
+iv) Create a data frame `my.df` that comprises `x` and two new variables `y` and `z`.  **(2 MARKS)**
+
+```{r}
+# Create y and z
+y <- c(4:1)
+z <- seq(0,6,2)
+# Add your code to create my.df below
+
+```
+
+
+v) Summarise the data frame `my.df`.  Include summary statistics and plots as appropriate. **(4 MARKS)**
+
+   -- Answer here 
+   
+
+vi) What are robust statistics?  Why do data analysts often use robust statistics for exploratory data analysis?   **(8 MARKS)**
+
+   -- Answer here 
+
+**Etc etc**
+
+
+
+
+---
+
+## Section II: Quantitative Data Analysis
+
+**Question 4:**
+
+See the output from a correlation test between two variables speed and distance below:
+
+
+	Pearson's product-moment correlation
+
+data:  cars$speed and cars$dist
+t = 9.464, df = 48, p-value = 1.49e-12
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.6816422 0.8862036
+sample estimates:
+      cor 
+0.8068949 
+
+
+i) What can you conclude about the correlation between speed and distance? **(2 MARKS)**
+
+-- Answer here  
+
+ii) Explain how you would visualise in a graph the relationship between these two variables? **(4 MARKS)**
+
+
+-- Answer here  
+
+
+**Etc etc**
+
+
+*****END OF EXAM*****
