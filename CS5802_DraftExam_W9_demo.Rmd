@@ -1,9 +1,9 @@
 ---
 title: "DEMO!!!! CS5802: Critical Analysis of Modern Data Exam"
 output: html_notebook
-date: 25/11/2020
+date: 9/11/2022
 author: Johnny Student
-version: 0.4 (Draft)
+version: 0.1 (Draft)
 ---
 
 ![BUL Logo](https://www.brunel.ac.uk/SiteElements/images/brunel-logo-blue.png)
@@ -16,9 +16,9 @@ version: 0.4 (Draft)
 #### Exam Author(s): Martin Shepperd and Isabel Sassoon
 #### Module Code: CS5802
 #### Module Title: Critical Analysis of Modern Data Exam
-#### Month: 0930-1230, 15th December,	2020
+#### Month: December,	2022
 #### Exam Type: Full
-#### Duration: 3 hours plus 5 minutes upload time  
+#### Duration: 3 hours plus 10 minutes upload time  
 
 
 ## Exam instructions  
@@ -33,96 +33,86 @@ version: 0.4 (Draft)
 
 ## Exam rubric
 
-1. The exam comprises two equally weighted sections each with three questions, making a total of SIX questions.  You should attempt *all* questions.  
-2. The allocated marks are indicated for each question and sub-question.  There is a total of 100 marks.  
-3. Note that although each section notionally 'belongs' to either CS5701 or CS5702 you are encouraged to draw on any relevant material.  
-4. This is an open book exam.  
-5. The end of the exam questions is delimited by "*****END OF EXAM*****".    
+1. This section (SECTION B) comprises one question containing sub-questions.  You should attempt *all* sub-questions.  
+2. The allocated marks are indicated for each sub-question.  There is a total of 100 marks.  
+3. Note that no sub-question 'belongs' to either CS5701 or CS5702 so you are encouraged to draw on any relevant material.  
+4. This is an OPEN BOOK exam.  
+5. The end of the exam is delimited by "*****END OF EXAM*****".    
 
 By continuing beyond this point, you confirm that you have read the information and instructions above and understand the conditions of this examination.  
 
 ---
 
-## Section I: Modern Data
+## Section B: Data analysis question (Total 100 marks)
 
-**Question 1: (Total 15 marks)**
+**Question B1: Data quality checking (Total 25 marks)**
 
-i) Explain, with examples, what are the main atomic (basic) data types built into R? **(4 MARKS)**
-
-    -- Answer here  
-
-
- 
-ii) What data type is `x`? **(2 MARKS)**
+You have been presented with a new data set based on survivors from the SS Totemic.  The data are organised by class of passenger (or crew member), their sex, whether the person was an adult or child and frequency counts for survivors / non-survivors, represented as separate rows.  (NB The Totemic is the imaginary sister ship to the Titanic and bizarrely was involved in a similar incident when she carelessly crashed into another iceberg and rapidly sunk.  Be aware that these are distinct data sets.)
 
 ```{r}
-# Do not edit this code
-x <- c("a", "", NA, "d")
+# Run this code to load the Totemic data set as a data frame Totemic
+# as part of Q2
+remoteFileName <- "https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/Totemic.RData"
+load(file = url(remoteFileName))
+head(Totemic)
 ```
 
+B1i) Describe in a **list** the various checks you will make to the Totemic data set to determine the data quality.  Be specific, i.e., don't just say check the data are valid!  Make sure you include checks that are passed (i.e., do not restrict yourself to checks that identify problems).  **(10 MARKS)**
 
-iii) Edit `x` so that it comprises the letters "a", "b", "c", "d".  Output the new contents. **(2 MARKS)**
-
-```{r}
-# Add your code to update x below
-
-```
+> Add your answer here
 
 
-iv) Create a data frame `my.df` that comprises `x` and two new variables `y` and `z`.  **(2 MARKS)**
+
+B1ii) Implement your checks in R. Use comments and meaningful variable names.  **(10 MARKS)**
 
 ```{r}
-# Create y and z
-y <- c(4:1)
-z <- seq(0,6,2)
-# Add your code to create my.df below
+# Add your data cleaning code here for Q2(ii)
 
 ```
 
 
-v) Summarise the data frame `my.df`.  Include summary statistics and plots as appropriate. **(4 MARKS)**
 
-   -- Answer here 
-   
+B1iii) Summarise the results of your quality analysis of the Totemic data set clearly indicating all the problems you have identified.  **(5 MARKS)**
 
-vi) What are robust statistics?  Why do data analysts often use robust statistics for exploratory data analysis?   **(8 MARKS)**
-
-   -- Answer here 
-
-**Etc etc**
+> Add your answer here
 
 
 
 
----
-
-## Section II: Quantitative Data Analysis
-
-**Question 4:**
-
-See the output from a correlation test between two variables speed and distance below:
+**Question B2: Data cleaning (Total 25 marks)**
 
 
-	Pearson's product-moment correlation
-
-data:  cars$speed and cars$dist
-t = 9.464, df = 48, p-value = 1.49e-12
-alternative hypothesis: true correlation is not equal to 0
-95 percent confidence interval:
- 0.6816422 0.8862036
-sample estimates:
-      cor 
-0.8068949 
+etc, etc
 
 
-i) What can you conclude about the correlation between speed and distance? **(2 MARKS)**
 
--- Answer here  
+**Question B3: Data cleaning (Total 25 marks)**
 
-ii) Explain how you would visualise in a graph the relationship between these two variables? **(4 MARKS)**
+B3i) Suppose naval historians wish to understand the difference, if any, between male and female survival rates.  Produce relevant descriptive statistics and visualisations to help the historians. **(15 MARKS)**
 
 
--- Answer here  
+etc etc
+
+
+
+*****END OF EXAM*****
+
+```{r}
+# Add your data cleaning code here for B3i
+
+```
+
+
+B3ii) What test would you suggest to investigate if there are statistically sigificant differences between the male and female survival rates?  Justify your answer.  Implement your approach in R.  **(10 MARKS)**
+
+> Add your answer here
+
+
+```{r}
+# Add your code for B3ii
+
+```
+
 
 
 **Etc etc**
