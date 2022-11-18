@@ -1,0 +1,181 @@
+---
+title: "CS5802_SectionB_PRACTISE"
+author: "xxx"
+date: "2022-11-18"
+output: html_document
+version: 0.1 
+---
+
+![BUL Logo](https://www.brunel.ac.uk/SiteElements/images/brunel-logo-blue.png)
+
+# Exam Question Paper
+
+#### College/ Institute:	College of Engineering, Design & Physical Sciences (CEDPS)
+#### Department: Computer Science	
+#### Exam Author(s): Martin Shepperd and Isabel Sassoon
+#### Module Code: CS5802
+#### Module Title: PRACTISE - Critical Analysis of Modern Data Exam
+#### Month: December,	2022
+#### Exam Type: Full
+#### Duration: 3 hours plus 10 minutes upload time  
+
+
+## Exam instructions  
+
+1. Uploads need to be **COMPLETED** before the end of the upload time.  Late work will not be accepted.  If you have any problems uploading work you must notify us that you are experiencing difficulties in uploading and/or submitting your work.  Work sent via email will not be marked.  
+2. You should upload a *single answer file* (as an RMarkdown file) based on **this** Exam Template containing your answers which will be a mix of text and R code.  NB The suffix will need to be editted from .Rmd to .txt to enable the upload.  
+3. When you save your notebook, an HTML file containing the code and output will be saved alongside it.  Do not upload any rendered HTML or PDF files.  
+4. Do not edit the YAML header (lines 1-7) except to replace xxx with your student id.  
+5. Write your answers using RMarkdown.  For guidance see a [helpful blog](https://www.dataquest.io/blog/r-markdown-guide-cheatsheet/#tve-jump-17333da0719) or use the R Markdown cheatsheet which can be accessed from within RStudio by selecting `Help > Cheatsheets > R Markdown Quick Reference`.  
+6. You may *not* communicate by any means with other candidates nor share information/discuss exam-related matters with any external person for the duration of the exam.  
+
+
+## Exam rubric
+
+1. This section (SECTION B) comprises one question containing four sub-questions.  You should attempt *all* sub-questions.  
+2. The allocated marks are indicated for each sub-question.  There is a total of 100 marks.  
+3. Note that no sub-question 'belongs' to either CS5701 or CS5702 so you are encouraged to draw upon any relevant material.  
+4. This is an OPEN BOOK exam.  
+5. The end of the exam is delimited by "*****END OF EXAM*****".    
+
+By continuing beyond this point, you confirm that you have read the information and instructions above and understand the conditions of this examination.  
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# SECTION B: data analysis question (Total 100 marks)
+
+This question is based on the following data set.  You are advised to answer the questions in the order presented since the outcome of one question may impact a subsequent question.  
+
+
+## Introducing the cat dataset
+
+This question is based on a dataset about penguins.  It has some similarities with a better known dataset entitled `palmerpenguins` however make sure you use `penguins`.
+
+It comprises six variables:
+species: e.g., Adelie
+bill_length_mm: 
+bill_depth_mm:
+flipper_length_mm: 
+body_mass_g:
+sex: Male or Female 
+
+If you are interested here is some background information on penguin species [here](https://cran.r-project.org/web/packages/palmerpenguins/readme/README.html), however, it is peripheral to answering the question.
+
+The data has been prepared for analysis for you using the code in the R chunk below.
+
+
+```{r}
+# Run this code to load the badPenguin dataset.
+# DO NOT EDIT!!!!!
+
+# Loads the data set as the dataframe badPenguins
+remoteFileName <- url("https://www.dropbox.com/s/vw10pmykafoja8m/badPenguins.rda?dl=1")
+load(remoteFileName)
+```
+
+
+## SUB-QUESTION B1 (**35 Marks)
+
+B1i) Describe in a **list** the various checks you will make to the badPenguins data set to determine the data quality.  Be specific, i.e., don't just say check the data are valid!  Make sure you include checks that are passed (i.e., do not restrict yourself to checks that identify problems).  **(10 MARKS)**
+
+> Add your answer here
+
+
+
+B1ii) Implement your checks in R. Use comments and meaningful variable names. Include all checks you believe necessary irrespective of whether they find quality problems or not. **(10 MARKS)**
+
+```{r}
+# Add your data cleaning code here for B1(ii)
+
+```
+
+
+B1iii) Summarise the results of your quality analysis of the badPenguins data set clearly indicating all the problems you have identified.  **(5 MARKS)**
+
+> Add your answer here
+
+
+B1iv) Describe how you will clean the badPenguins data set to address the problems you list in the previous question (B1iii).  Indicate the reasons for your choices **(5 MARKS)**
+
+
+> Add your answer here
+
+
+
+B1v) Implement your cleaning strategy using R in the code chunk below **(5 MARKS)** 
+
+```{r}
+# Add your R code for question B1v here
+
+```
+
+
+
+## SUB-QUESTION B2 (**15 Marks)
+
+B2i) Undertake an exploratory data analysis of your cleaned badPenguins data set.  Consider the variables independently and also explore how they covary.  Include visualisations that provide insight or understanding into this data set.  Discuss your findings.  **(15 MARKS)**
+
+
+
+## SUB-QUESTION B3 (**50 Marks)
+
+B3i) What is the 95% confidence interval for the proportion of male penguins in the sample provided? Please provide code used to compute it and an explanation of the approach chosen and your findings.  **(10 MARKS)**
+
+> Add your answer to B3i here
+
+```{r}
+#use this code chunk for the R you need to compute it
+
+
+```
+
+
+
+
+B3ii) Provide R code (use the code chunk below) to visualise the relationship between weight and species graphically (using a plot) and explain what it reveals. **(10 MARKS)**
+
+> Answer here for B3ii 
+
+
+```{r}
+# Use this code chunk to provide your visualisation R code and explain in words and/or 
+# comments what it shows. 
+
+
+```
+
+
+
+
+B3iii) To determine whether there is a statistically significant difference in weight of the three different species what modelling approach would you use and why? **(10 MARKS)**  
+
+> Answer here  
+
+
+
+B3iv) Write the R code for your proposed model in the chunk below and test whether there is a statistically significant difference.  Explain your results. **(10 MARKS)**
+
+> Answer here  
+
+```{r}
+# Use this code chunk to implement your model
+```
+
+
+
+B3v) Is there a difference in the mean weight for Male and Female penguins? Explain your approach and include the code to test this hypothesis **(10 MARKS)**
+
+> Answer here  
+
+
+```{r}
+# Use this code chunk for the code
+```
+
+
+
+*****END OF EXAM*****
