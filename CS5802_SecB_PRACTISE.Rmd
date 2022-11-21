@@ -51,7 +51,7 @@ knitr::opts_chunk$set(echo = TRUE)
 This question is based on the following data set.  You are advised to answer the questions in the order presented since the outcome of one question may impact a subsequent question.  
 
 
-## Introducing the cat dataset
+## Introducing the penguin dataset
 
 This question is based on a dataset about penguins.  It has some similarities with a better known dataset entitled `palmerpenguins` however make sure you use `penguins`.
 
