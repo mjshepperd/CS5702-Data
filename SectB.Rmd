@@ -3,7 +3,7 @@ title: "CS5802_SectionB"
 author: "xxx"
 date: "2022-12-05"
 output: html_document
-version: 0.5 (Draft)
+version: 0.5 
 ---
 
 ![BUL Logo](https://www.brunel.ac.uk/SiteElements/images/brunel-logo-blue.png)
