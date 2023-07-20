@@ -1,9 +1,9 @@
 ---
 title: "CS5802_SectionB"
 author: "xxx"
-date: "2022-12-05"
+date: "2023-07-21"
 output: html_document
-version: 0.5 
+version: 0.6 
 ---
 
 ![BUL Logo](https://www.brunel.ac.uk/SiteElements/images/brunel-logo-blue.png)
@@ -15,7 +15,7 @@ version: 0.5
 #### Exam Author(s): Martin Shepperd and Isabel Sassoon
 #### Module Code: CS5802
 #### Module Title: Critical Analysis of Modern Data Exam
-#### Month: December,	2022
+#### Month: August 2023
 #### Exam Type: Full
 #### Duration: 3 hours plus 10 minutes upload time  
 
@@ -32,11 +32,12 @@ version: 0.5
 
 ## Exam rubric
 
-1. This section (SECTION B) comprises one question containing three sub-questions.  You should attempt *all* sub-questions.  
-2. The allocated marks are indicated for each sub-question.  There is a total of 100 marks.  
-3. Note that no sub-question 'belongs' to either CS5701 or CS5702 so you are encouraged to draw upon any relevant material.  
-4. This is an OPEN BOOK exam.  
-5. The end of the exam is delimited by "*****END OF EXAM*****".    
+1. You only need to attempt this Section if you are taking the exam uncapped (i.e., as if for the first time).  Otherwise, it is sufficient to do Section A only because if you pass Section A you will obtain a C- grade anyway and you are not eligible for a higher grade that Section B could enable.
+2. This section (SECTION B) comprises one question containing three sub-questions.  You should attempt *all* sub-questions.  
+3. The allocated marks are indicated for each sub-question.  There is a total of 100 marks.  
+4. Note that no sub-question 'belongs' to either CS5701 or CS5702 so you are encouraged to draw upon any relevant material.  
+5. This is an OPEN BOOK exam.  
+6. The end of the exam is delimited by "*****END OF EXAM*****".    
 
 By continuing beyond this point, you confirm that you have read the information and instructions above and understand the conditions of this examination.  
 
