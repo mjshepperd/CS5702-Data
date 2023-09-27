@@ -1,18 +1,21 @@
 ---
-title: "CS5702 W2 Worksheet Notebook"
+title: "CS5702 Week2 Worksheet Notebook"
 output:
   pdf_document: default
   html_document: default
-date: 14/10/2021
+date: 24/09/2023
 author: Martin Shepperd
 ---
+
+NB This code is updated to generate wordclouds on your local machine.
+
 
 #Week 2 Worksheet 
 
 
 # 0. Worksheet Topics
 
-1. [Seminar: Analysing your questionnaire](#WS1)  
+1. [Case study: Analysing your questionnaire](#WS1)  
 2. [Lab: Some More R practice](#WS2)  
 3. [Selected Answers](#WS3A)
 
@@ -44,7 +47,7 @@ I used Google Forms for (i) simplicity, (ii) it's free and (iii) you can easily 
 
 ## 1.3 A short story with a moral
 
-For the Home Country question (Q4) I wanted a pull down menu so the should be constrained (e.g., to avoid UK, United Kingdom, GB, England, etc).  But there are many countries and it feels like this would be a boring and error-prone task to manually copy and paste each country name into Google Forms.  
+For the Home Country question (Q4) I wanted a pull down menu so answers should be constrained (e.g., to avoid synonyms such as UK, United Kingdom, GB, England, etc).  But there are many countries and it feels like this would be a boring and error-prone task to manually copy and paste each country name into Google Forms.  
 
 I used [StackExchange](https://webapps.stackexchange.com/questions/76189/how-to-create-a-countries-drop-down-list-question-without-entering-all-countrie) because I reasoned (i) many other people must want to get a country response and (ii) will use a drop-down list.  
 
@@ -57,15 +60,17 @@ For simplicity the csv file name is pointed at a recent version I extracted from
 
 First we must fetch the raw data using a convenient built in function called `read.csv()` that imports the data into an R data frame.  The options indicate the file has headers which can be used as variable names.
 
+Note the UTF encoding option to prevent problems with PC users and unusual characters arising from how PC Excel appends a byte order mark at the start.  If you're super-interested see this [blog](https://www.johndcook.com/blog/2019/09/07/excel-r-bom/).
 
 ```{r}
-# Fetch the raw data CS5702JoiningSurvey_2021.csv from GitHub.
+# Fetch the raw data CS5702JoiningSurvey_2022.csv from GitHub.
 # Read the csv file into a new data frame called surveyDF
-surveyFileName <- "https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/CS5702JoiningSurvey_2021.csv"
+
+surveyFileName <- "https://raw.githubusercontent.com/mjshepperd/CS5702-Data/master/CS5702JoiningSurvey_2023.csv"
 surveyDF <- read.csv(surveyFileName, header = TRUE, stringsAsFactors = FALSE, fileEncoding = 'UTF-8-BOM')
 ```
 
-A simple starting point is to *"eyeball"* the imported data.  If you look in the Environment Pane in RStudio you can see a little table icon by the data frame surveyDF.  (Alternatively you could run the R function `View()` directly.)  As a starting point we should check to see if the values appear 'sensible'.
+A simple starting point is to *"eyeball"* the imported data.  If you look in the Environment Pane in RStudio you can see a little table icon by the data frame surveyDF.  (Alternatively you could run the R function `View()` directly.)  Then we should check to see if the values appear 'sensible'.
 
 ```{r}
 # Get a 'spreadsheet' type view of our data.
@@ -82,7 +87,7 @@ names(surveyDF)  # The names() function returns all the dataframe column names
 
 # Choose shorter, clearer names
 # For clarity I've chosen a risky approach of using column position 
-# rather than the very long original variable name.  
+# rather than the very long original variable name. 
 names(surveyDF)[3] <- "MSc"
 names(surveyDF)[4] <- "StudyMode"
 names(surveyDF)[5] <- "Background"
@@ -95,7 +100,7 @@ names(surveyDF)[11] <- "Excite"
 names(surveyDF)[12] <- "Concern"
 ```
 
-Remove column X as this is redundant (in fact an error on my part, the lesson being check and double check your questionnaires!)  
+Remove column X as this is redundant (in fact an error on my part), the lesson being check and double check your questionnaires!   
 
 ```{r}
 # Drop X using set difference with '-' operator
@@ -141,7 +146,7 @@ table(surveyDF$MSc)
 **Exercise 1.6:** Make a list of things we should check for when trying to assure the quality of our survey data.
 
 
-One common problem is **missing** data is frequently a problem for data analysis.  It is so important we will revisit the topic in detail in Week 5 on Data Cleaning.  In R missing observations should be denoted `na`.  Note that this is different to `NaN` (or Not a Number) which refers to the result of a computation e.g., `sqrt(-1)`.  Try it!  
+One common problem is **missing** data is frequently a problem for data analysis.  It is so important we will revisit the topic in detail in Week 5 on Data Cleaning.  In R missing observations should be denoted `NA`.  Note that this is different to `NaN` (or Not a Number) which refers to the result of a computation e.g., `sqrt(-1)`.  Try it!  
 
 ```{r}
 # An example computation that yields NaN i.e., an irrational number
@@ -155,14 +160,22 @@ Whilst it might seem a technicality, the importing function read.csv() treats an
 # using the is.na() function
 
 is.na(surveyDF)
+```
 
-# We can also count as the above produces a large table is hard to read 
+We can also count as the above produces a large table is hard to read.
+
+```{r}
 paste("The count of missing observations is:",sum(is.na(surveyDF)))
+
+# Or by column/var we can use a new function colSums()
+colSums(is.na(surveyDF))
 ```
 
 The `is.na()` function returns True or False depending on whether the observation is present or not.  In our case there are no missing values so we only see FALSE results, and the count is zero.
 
-Note that almost always when we want to refer to a specific variable **in** a data frame we use the `$` notation e.g., `<data frame name>$<column name>`.
+Note how we can next functions so the result of the inner call is passed as an argument to the outer call.  
+
+Also when we want to refer to a specific variable **in** a data frame we use the `$` notation e.g., `<data frame name>$<column name>`.
 
 It is particularly important to think about the data types of the different variables in our data frame.  One quite easy way to look at the entire data frame is to use the `str()` function.  (str is short for structure obvs!)
 
@@ -182,7 +195,8 @@ surveyDF$MSc <- as.factor(surveyDF$MSc)
 surveyDF$StudyMode <- as.factor(surveyDF$StudyMode)
 ```
 
-**Exercise 1.7:** How can you check that your code has been successful?  HINT: there are several ways you could accomplish this.  
+**Exercise 1.7:** How can you check that that the types have actually been changed?  HINT: there are several ways you could accomplish this.  
+
 
 
 ## 1.6 Some summary statistics
@@ -217,7 +231,7 @@ hist(surveyDF$ProgKnowl,
      )
 lines(density(surveyDF$ProgKnowl), col = "red")  
 ```
-NB The above plots are generated using Base R.  In subsequent weeks we will move to {ggplot} which is far more powerful, but also a little more complex.  
+NB The above plots are generated using Base R.  In subsequent weeks we will move to {ggplot2} which is far more powerful, but also a little more complex.  
 
 For the character string variables we can use the `table()` function to produce frequency counts of categories.  This makes no sense when we deal with longer text (since each input will almost certainly be unique in phrasing if not in sentiment).  Similarly the `ProgLangs` variable is problematic because it is multi-valued i.e., it may contain zero or more programming languages.  This is a challenge we will return to in Week 5 on Data Cleaning.
 
@@ -233,9 +247,9 @@ table(surveyDF$MSc,surveyDF$StudyMode)
 
 ## 1.7 Multivariate analysis
 
-Here we start exploring the relation ships between more than one variable.
+Here we start exploring the relationships between more than one variable.
 
-For example, is there any relationship between `Background` [UG course] and choice of MSc?
+For example, is there any relationship between `Background` (UG course) and choice of MSc?
 
 ```{r}
 # This is an example of a 2-d table of frequencies.
@@ -248,13 +262,13 @@ addmargins(table(surveyDF$Background, surveyDF$MSc))
 prop.table(table(surveyDF$Background, surveyDF$MSc))
 ```
 
-**Extension Exercise 1.9:** Do AI and DSA students have different perceived levels of statistical and programming understanding?
+**Extension Exercise 1.8:** Do AI and DSA students have different perceived levels of statistical and programming understanding?
 
 To answer this question having turned `MSc` into a **factor** is now useful.  In R a factor has a special meaning, i.e., a character variable which takes on a limited number of different values (these are often referred to as categorical variables) e.g., StudyMode and MSc, whilst Concern would be a problematic choice because the text content is essentially unbounded.  To make this change of type we use the `as.factor()` function.
 
 A common way to visualise the distribution of values for a variable is a **boxplot**.  Boxplots can be used to compare distributions graphically based on five pieces of information, the minimum, Q1, Q2, Q3 and the maximum (they were proposed by the statistician John Tukey, see [wikipedia](https://en.wikipedia.org/wiki/Box_plot)).
 
-In R we can use the boxplot() function to produce boxplots.  
+In Base R we can use the boxplot() function to produce boxplots.  
 
 ```{r}
 # We can use boxplots to show similar(ish) information to histograms
@@ -289,9 +303,9 @@ boxplot(surveyDF$ProgKnowl ~ surveyDF$MSc,
         xlab = "Programming understanding",
         ylab = "MSc course")
 ```
-**Extension exercise 1.9:* To learn more about boxplots see Chapter 4 of the [Modern Data book](https://bookdown.org/martin_shepperd/ModernDataBook/C4_Pattern.html#how-do-the-data-vary) for an introductory discussion or for a little more depth: [Williamson, D., et al. (1989). The Box Plot: A Simple Visual Method to Interpret Data. Annals of Internal Medicine, 110(11), pp916-921.](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.976.8206&rep=rep1&type=pdf)   
+**Extension exercise 1.9:* What do you think the notches show?  To learn more about boxplots see Chapter 4 of the [Modern Data book](https://bookdown.org/martin_shepperd/ModernDataBook/C4_Pattern.html#how-do-the-data-vary) for an introductory discussion or for a little more depth: [Williamson, D., et al. (1989). The Box Plot: A Simple Visual Method to Interpret Data. Annals of Internal Medicine, 110(11), pp916-921.](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.976.8206&rep=rep1&type=pdf)   
 
-**Exercise 1.10:** Now we've generated the boxplots we need to consider whether there are any differences.  What do you think?  How large are the differences?  Do they matter?  Sometimes statisticians test whether the differences are important by means of Inferential Statistics and you will learn about these in CS5701 (Quantitative Data Analysis).
+**Exercise 1.10:** Now we've generated the boxplots we need to consider whether there are any differences.  What do you think?  How large are the differences?  Do they matter?  Sometimes statisticians test whether the differences are important by means of Inferential Statistics and you will learn about these in CS5701 (Quantitative Data Analysis).  Related we could compare the notches.  What information might that provide?  
 
  
 ## 1.8 Text analysis
@@ -299,32 +313,55 @@ boxplot(surveyDF$ProgKnowl ~ surveyDF$MSc,
 Some of the variables are free format text which can also be analysed in R.  This is a little more complex so at this juncture we will simply generate some word clouds.
 
 ```{r}
+# This code is updated (04.10.22) to avoid the Windows file problem when
+# trying to import a text file into my shiny app.  Everything is implemented locally. 
+# If some of it is hard to follow at this stage don't worry; just try to
+# get the main concepts.
+
+# It helps to use some special purpose word analysis functions
+# You will need to install these packages the FIRST time
+# install.packages("wordcloud")     # Does what it says on the tin
+# install.packages("RColorBrewer")  # Provides some nice colour palettes
+# install.packages("wordcloud2")    # As per wordcloud
+# install.packages("tm")            # To process words into a corpus
+library(tidyverse)
+library(wordcloud)
+library(RColorBrewer)
+library(wordcloud2)
+library(tm)
+
 # To extract all the words into a single character string you need the 
 # paste() function with the collapse option.
 words <- paste(surveyDF$Excite, collapse = " ")
+docs <- Corpus(VectorSource(words))
 
 # A little more cleaning
+docs <- docs %>%
+  tm_map(removeNumbers) %>%
+  tm_map(removePunctuation) %>%
+  tm_map(stripWhitespace)
+docs <- tm_map(docs, content_transformer(tolower))
+docs <- tm_map(docs, removeWords, stopwords("english"))
 
-# Split words from string into vector (one word per element)
-words <- strsplit(words, "\\s+")[[1]]    
-# Remove any punctuation - gsub uses a pattern and :punct: is built in
-words <- gsub("[[:punct:]]","",words)
+# Create a document term matrix (dtm)
+dtm <- TermDocumentMatrix(docs) 
+matrix <- as.matrix(dtm) 
+words <- sort(rowSums(matrix),decreasing=TRUE) 
+wordsDF <- data.frame(word = names(words),freq=words)
 
-# Display the first six words to check ok
-head(words)
+# Look at the dataframe
+View(wordsDF)
 
-# Save the words in a text file as input to a word cloud generator
-# You can change the file name
-# NB This will overwrite the previous contents (if any)
-fileName <- file("MyWords2.txt")
-writeLines(words, fileName)
-close(fileName)
-
+# Generate the wordcloud
+wordcloud(words = wordsDF$word, freq = wordsDF$freq, min.freq = 1,
+          max.words=200, random.order=FALSE, 
+          rot.per=0.35, colors=brewer.pal(8, "Dark2"))
 ```
 
-You can then copy and paste into a word cloud generator.  At a later stage we will do this programmatically but to keep things simple for now you can use my [word cloud generator](https://martin-shepperd.shinyapps.io/shinywordcloud/) which is written using R and shiny.  
-
 **Exercise 1.11:** What are the dominant themes for (i) `Excite` and (ii) `Concern`?  Does the word cloud also find unimportant words?  What about similar words but with different endings e.g., singular and plural?
+
+**Extension Exercise 1.12:**  Implement your own wordcloud code to look at the Concern words.  You could do it differently from my approach.   Because text analysis is so common there are a number of different implementations.  A straightforward approach uses the {tm} and {wordcloud} packages along with {RColorBrewer} for the colours.  There's some guidance at [STHDA](http://www.sthda.com/english/wiki/text-mining-and-word-cloud-fundamentals-in-r-5-simple-steps-you-should-know).  
+
 
 
 ## 2. Lab: Some More R practice{#WS2}  
@@ -350,6 +387,8 @@ weight <- seq(1,length.out=20)
 
 
 **Exercise 2.2:** Generate a new vector `weight` that is the same length, contains random values with a mean of 65 and a sd=10.  Then compute a new vector called `BMI`.  HINT $$BMI = \frac{weight}{height^2}$$.  SECOND HINT you can apply operations to vectors e.g., 
+
+Note, for those of you used to programming we don't need to write a for-loop but instead can apply operations directly to vectors.  This is easier to code and understand.  It's also computationally far more efficient for when you have large volumes of data.
 
 ```{r}
 # Example vector operation
